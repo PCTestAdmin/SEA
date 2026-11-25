@@ -24,7 +24,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -39,3 +39,10 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     self.assertTrue(any(c.type=='image' and c.mimeType=='image/png' for c in image.content))
                     result=await session.call_tool('compare_recordings',{'path_a':str(wav),'path_b':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
+
+                    result=await session.call_tool('investigate_media',{'path':str(wav),'duration_s':1})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    self.assertEqual(data['available_modalities'],{'audio':True,'video':False})
+                    result=await session.call_tool('sense_video',{'path':str(wav),'duration_s':1})
+                    self.assertTrue(result.isError)

@@ -2,6 +2,7 @@
 from mcp.server.fastmcp import FastMCP, Image
 from .engine import resolve_media, probe, analyze, frame
 from .acoustics import analyze_audio, compare_audio, spectrogram
+from .vision import analyze_video, investigate
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Media results may be visible to the AI provider.')
 
@@ -37,6 +38,16 @@ def audio_spectrogram(path: str, start_s: float = 0, duration_s: float = 15, max
 def compare_recordings(path_a: str, path_b: str, start_a_s: float = 0, start_b_s: float = 0, duration_s: float = 15) -> dict:
     """Compare equally long authorized local audio segments (0.25–30 s). Differences are B minus A; no automatic alignment or quality judgment."""
     return compare_audio(resolve_media(path_a), resolve_media(path_b), start_a_s, start_b_s, duration_s)
+
+@mcp.tool()
+def sense_video(path: str, start_s: float = 0, duration_s: float = 30) -> dict:
+    """Measure sampled pixel changes, histogram shifts, change regions and low-change intervals in authorized local video (0.25–120 s). No object tracking or confirmed scene cuts."""
+    return analyze_video(resolve_media(path),start_s,duration_s)
+
+@mcp.tool()
+def investigate_media(path: str, start_s: float = 0, duration_s: float = 15, tolerance_s: float = .5) -> dict:
+    """Build an evidence-indexed audio/video investigation report (0.25–30 s). Correlate nearby level transitions and visual changes, then suggest frame timestamps. Proximity is not causation; interpret only with evidence."""
+    return investigate(resolve_media(path),start_s,duration_s,tolerance_s)
 
 def main():
     mcp.run(transport='stdio')

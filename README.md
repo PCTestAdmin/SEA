@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.3.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.4.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -108,7 +108,7 @@ python examples/make_demo.py /absolute/path/to/media/demo.mp4
 
 [Demo generator](examples/make_demo.py) · [Recorded JSON evidence](examples/demo-report.json) · [Test assertions](tests/test_engine.py)
 
-### New in v0.3 — acoustic evidence
+### Acoustic evidence
 
 Ask your agent to locate level changes, inspect frequency peaks and compare two equally long recording segments. SEA returns 100 ms level measurements, a time-frequency image and numeric differences rather than a guessed sound label.
 
@@ -119,6 +119,26 @@ Distinguish measured differences from possible explanations.
 ```
 
 [Acoustic analysis guide](docs/acoustics.md) · [Reproducible acoustic tests](tests/test_acoustics.py)
+
+### New in v0.4 — investigate, don't just inspect
+
+`investigate_media` brings the audio and visual engines together. It assigns evidence IDs, matches nearby point events and recommends timestamps for deeper frame inspection. The agent can then interpret and cross-check those observations.
+
+```mermaid
+flowchart LR
+    A["Sense"] --> B["Measure"]
+    B --> C["Correlate"]
+    C --> D["Inspect evidence"]
+    D --> E["Agent explains"]
+```
+
+```text
+Investigate my video with SEA. Find changes in sound and image,
+check whether they occur close together, then inspect the most
+relevant frames. Explain the evidence and what remains unknown.
+```
+
+[Investigation guide](docs/investigation.md) · [Reproducible tests](tests/test_vision.py)
 
 ## What could you use SEA for?
 
@@ -160,6 +180,8 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `sense_audio` | Spectral peaks, band power, 100 ms levels and threshold events |
 | `audio_spectrogram` | Time-frequency PNG for visual investigation |
 | `compare_recordings` | Numeric differences between equally long audio segments |
+| `sense_video` | Sampled visual activity, histogram shifts, change regions and static intervals |
+| `investigate_media` | Evidence-indexed multimodal report, temporal matches and frame follow-ups |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -169,7 +191,7 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | Audio | WAV, MP3, FLAC, M4A, OGG, OPUS |
 | Video | MP4, MOV, MKV, WebM |
 | Maximum file size | 2 GiB |
-| Analysis window | 0.25–60 seconds per call |
+| Analysis window | 0.25–120 s visual, 0.25–30 s acoustic/investigation, 0.25–60 s combined legacy tool |
 | Audio sampling | First audio stream, mono, 16 kHz |
 | Video sampling | First video stream, grayscale, 160 × 90, 4 fps |
 | Timeline | Approximate half-second bins |
@@ -197,6 +219,7 @@ See [installation and usage details](docs/installation.md).
 - [ ] One-click extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
+- [x] Evidence-indexed multimodal investigation and sampled visual change regions
 - [ ] Spatial and sensor modalities
 
 The long-term goal is a modular perception layer for AI agents. We prioritize features that yield observable, testable information rather than adding tools for their own sake.
@@ -243,6 +266,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Multimodal investigation](docs/investigation.md) | Visual measurements, correlation and follow-up workflow |
 | [Acoustic analysis](docs/acoustics.md) | Spectrograms, measurements, comparisons and limitations |
 | [Example evidence](examples/demo-report.json) | Structured demo output |
 | [Development tests](tests/) | Engine and MCP integration tests |

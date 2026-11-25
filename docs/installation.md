@@ -71,7 +71,7 @@ In Claude Desktop, open the local MCP config (Settings > Developer > Edit Config
 }
 ```
 
-Restart the MCP client and verify that SEA exposes six tools: inspect_media, sense_media, view_frame, sense_audio, audio_spectrogram and compare_recordings. Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
+Restart the MCP client and verify that SEA exposes eight tools: inspect_media, sense_media, view_frame, sense_audio, audio_spectrogram, compare_recordings, sense_video and investigate_media. Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
 
 ## Command-line usage
 
@@ -105,7 +105,7 @@ Generate a synthetic fixture using `python examples/make_demo.py /absolute/path/
 
 SEA accepts local files only and uses fixed decoder arguments. Resolved paths outside configured roots are rejected. This is not an OS sandbox; use trusted files, avoid shared writable folders, concurrent path replacement and network mounts, and keep FFmpeg patched. No SEA uploads or remote API calls are required for analysis; the MCP client may transmit tool results to its AI provider.
 
-Only the first audio/video stream is analyzed. Audio is downmixed to mono at 16 kHz. Video measurements are sampled at 4 fps in 160×90 grayscale. Timestamps are approximate, not exact source PTS; events between samples may be missed. Low-level bins use an RMS threshold below −40 dBFS. Visual-change flags use a normalized mean pixel difference of at least 0.12. These heuristics do not establish object motion, causation, physical loudness or diagnosis. Null dBFS with observed audio means zero amplitude. File limit: 2 GiB. Segment limit: 60 seconds. Decoder timeout: 45 seconds per operation.
+Only the first audio/video stream is analyzed. Audio is downmixed to mono at 16 kHz. Video measurements are sampled at 4 fps in 160×90 grayscale. Timestamps are approximate, not exact source PTS; events between samples may be missed. Low-level bins use an RMS threshold below −40 dBFS. Visual-change flags use a normalized mean pixel difference of at least 0.12. These heuristics do not establish object motion, causation, physical loudness or diagnosis. Null dBFS with observed audio means zero amplitude. File limit: 2 GiB. Segment limits: 60 seconds for sense_media, 120 seconds for sense_video and 30 seconds for acoustic/investigation tools. Decoder timeout: 45 seconds per operation.
 
 ## Development
 
