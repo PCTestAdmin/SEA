@@ -1,0 +1,192 @@
+{
+  "media": {
+    "file": "demo.mp4",
+    "duration_s": 6,
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "mpeg4",
+        "codec_type": "video",
+        "width": 320,
+        "height": 180,
+        "duration": "6.000000"
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "16000",
+        "channels": 1,
+        "duration": "6.000000"
+      }
+    ],
+    "audio": true,
+    "video": true
+  },
+  "requested_window_s": [
+    0,
+    6
+  ],
+  "audio": {
+    "sample_rate_hz": 16000,
+    "channels": "mono mix",
+    "analyzed_s": 6,
+    "rms_dbfs": -18.09,
+    "peak_dbfs": -10.28,
+    "near_full_scale_fraction": 0,
+    "note": "Digital sample levels, not calibrated loudness or proof of clipping. Null dBFS means zero amplitude."
+  },
+  "video": {
+    "sample_rate_fps": 4,
+    "frames": 24,
+    "sample_size": [
+      160,
+      90
+    ],
+    "note": "Frame change measures pixel differences, not object motion; cuts, exposure and camera motion can look similar."
+  },
+  "timeline": [
+    {
+      "start_s": 0,
+      "end_s": 0.5,
+      "audio_rms_dbfs": null,
+      "audio_observed": true,
+      "dominant_frequency_hz": null,
+      "low_level": true,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    },
+    {
+      "start_s": 0.5,
+      "end_s": 1,
+      "audio_rms_dbfs": null,
+      "audio_observed": true,
+      "dominant_frequency_hz": null,
+      "low_level": true,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    },
+    {
+      "start_s": 1,
+      "end_s": 1.5,
+      "audio_rms_dbfs": null,
+      "audio_observed": true,
+      "dominant_frequency_hz": null,
+      "low_level": true,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    },
+    {
+      "start_s": 1.5,
+      "end_s": 2,
+      "audio_rms_dbfs": -86.05,
+      "audio_observed": true,
+      "dominant_frequency_hz": null,
+      "low_level": true,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    },
+    {
+      "start_s": 2,
+      "end_s": 2.5,
+      "audio_rms_dbfs": -13.32,
+      "audio_observed": true,
+      "dominant_frequency_hz": 440,
+      "low_level": false,
+      "max_frame_change": 1,
+      "video_frames": 2,
+      "visual_change_flag": true
+    },
+    {
+      "start_s": 2.5,
+      "end_s": 3,
+      "audio_rms_dbfs": -13.32,
+      "audio_observed": true,
+      "dominant_frequency_hz": 440,
+      "low_level": false,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    },
+    {
+      "start_s": 3,
+      "end_s": 3.5,
+      "audio_rms_dbfs": -13.32,
+      "audio_observed": true,
+      "dominant_frequency_hz": 440,
+      "low_level": false,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    },
+    {
+      "start_s": 3.5,
+      "end_s": 4,
+      "audio_rms_dbfs": -13.32,
+      "audio_observed": true,
+      "dominant_frequency_hz": 440,
+      "low_level": false,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    },
+    {
+      "start_s": 4,
+      "end_s": 4.5,
+      "audio_rms_dbfs": -81.71,
+      "audio_observed": true,
+      "dominant_frequency_hz": null,
+      "low_level": true,
+      "max_frame_change": 1,
+      "video_frames": 2,
+      "visual_change_flag": true
+    },
+    {
+      "start_s": 4.5,
+      "end_s": 5,
+      "audio_rms_dbfs": null,
+      "audio_observed": true,
+      "dominant_frequency_hz": null,
+      "low_level": true,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    },
+    {
+      "start_s": 5,
+      "end_s": 5.5,
+      "audio_rms_dbfs": null,
+      "audio_observed": true,
+      "dominant_frequency_hz": null,
+      "low_level": true,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    },
+    {
+      "start_s": 5.5,
+      "end_s": 6,
+      "audio_rms_dbfs": null,
+      "audio_observed": true,
+      "dominant_frequency_hz": null,
+      "low_level": true,
+      "max_frame_change": 0,
+      "video_frames": 2,
+      "visual_change_flag": false
+    }
+  ],
+  "observations": {
+    "low_level_bins": 8,
+    "visual_change_bins": 2
+  },
+  "limitations": [
+    "First audio/video stream only; audio downmixed to mono.",
+    "Approximate timestamps from sampled decoded streams; not exact A/V sync or source PTS.",
+    "Sub-frame events may be missed; pixel change does not establish motion or causation.",
+    "No speech transcription, source identification, music understanding or diagnosis."
+  ]
+}
