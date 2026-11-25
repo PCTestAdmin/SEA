@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0
+
+- Bounded coarse-to-fine recording survey: up to five six-second windows, up to two four-second refinements.
+- Ranked audiovisual evidence candidates, explicit requested-range coverage gaps and visible failures.
+- Five survey tests and additional MCP integration coverage.
+- No unrestricted autonomous actions, semantic event claims or exhaustive coverage promises.
+
 ## 0.6.0
 
 - Numeric CSV sensor-log analysis with explicit seconds and channel selection.

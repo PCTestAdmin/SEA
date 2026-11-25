@@ -24,7 +24,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -63,3 +63,8 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
                     self.assertEqual(data['same_row_correlations'][0]['pearson_r'],1)
+
+                    result=await session.call_tool('investigate_recording',{'path':str(wav),'span_s':1,'max_refinements':0})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    self.assertEqual(data['scan_windows'][0]['status'],'scanned')

@@ -6,14 +6,14 @@
 
 ### Give your AI new senses.
 
-**Turn audio and video into measurable, time-aligned evidence your AI can investigate.**
+**Give your AI measurable evidence from sound, video, images and recorded signals.**
 
 [![GitHub stars](https://img.shields.io/github/stars/PCTestAdmin/SEA?style=flat-square&logo=github)](https://github.com/PCTestAdmin/SEA/stargazers)
 [![Tests](https://github.com/PCTestAdmin/SEA/actions/workflows/test.yml/badge.svg)](https://github.com/PCTestAdmin/SEA/actions/workflows/test.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.6.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.7.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -120,7 +120,7 @@ Distinguish measured differences from possible explanations.
 
 [Acoustic analysis guide](docs/acoustics.md) · [Reproducible acoustic tests](tests/test_acoustics.py)
 
-### New in v0.4 — investigate, don't just inspect
+### Investigate, don't just inspect
 
 `investigate_media` brings the audio and visual engines together. It assigns evidence IDs, matches nearby point events and recommends timestamps for deeper frame inspection. The agent can then interpret and cross-check those observations.
 
@@ -139,6 +139,18 @@ relevant frames. Explain the evidence and what remains unknown.
 ```
 
 [Investigation guide](docs/investigation.md) · [Reproducible tests](tests/test_vision.py)
+
+### New in v0.7 — autonomous coarse-to-fine investigation
+
+SEA can survey a recording, rank measured changes, revisit up to two promising windows and expose what it did not inspect. It operates within a bounded local decoding budget.
+
+```text
+Survey my recording with SEA. Investigate the strongest audio
+and visual changes, inspect relevant frames, and tell me which
+parts were not analyzed. Separate observations from hypotheses.
+```
+
+[Autonomous survey guide](docs/survey.md) · [Survey tests](tests/test_survey.py)
 
 ## What could you use SEA for?
 
@@ -185,6 +197,7 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `inspect_spatial` | Image-space grid, regional color and contrast measurements |
 | `inspect_region` | PNG crop of a selected normalized image region |
 | `sense_signals` | Numeric sensor CSV statistics, change events and correlations |
+| `investigate_recording` | Bounded multi-window survey, ranked candidates, targeted refinement and coverage gaps |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -200,6 +213,7 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | Audio sampling | First audio stream, mono, 16 kHz |
 | Video sampling | First video stream, grayscale, 160 × 90, 4 fps |
 | Timeline | Approximate half-second bins |
+| Survey span | Up to 30 min, sampled (not exhaustive) |
 
 Decoder support depends on the FFmpeg installation. Frame differences are not object tracking or proof of movement. Audio levels are not calibrated physical loudness or proof of clipping. A dominant frequency does not identify a sound source. Exact audiovisual sync, speech transcription and semantic music analysis are outside the current scope.
 
@@ -227,7 +241,9 @@ See [installation and usage details](docs/installation.md).
 - [x] Evidence-indexed multimodal investigation and sampled visual change regions
 - [x] Image-space spatial analysis and region inspection
 - [x] Numeric sensor-log analysis and paired-channel correlations
+- [x] Budgeted coarse-to-fine recording investigation
 - [ ] Physical depth and live sensor integration
+- [ ] Persistent perception memory and reusable evidence history
 
 The long-term goal is a modular perception layer for AI agents. We prioritize features that yield observable, testable information rather than adding tools for their own sake.
 
@@ -273,6 +289,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Autonomous survey](docs/survey.md) | Sampling plan, ranking, refinement and coverage |
 | [Sensor signals](docs/signals.md) | CSV schema, thresholds and paired-channel analysis |
 | [Spatial analysis](docs/spatial.md) | Image grids, normalized regions and crops |
 | [Multimodal investigation](docs/investigation.md) | Visual measurements, correlation and follow-up workflow |

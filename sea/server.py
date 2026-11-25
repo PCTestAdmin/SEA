@@ -5,6 +5,7 @@ from .acoustics import analyze_audio, compare_audio, spectrogram
 from .vision import analyze_video, investigate
 from .spatial import sense_spatial, crop_region
 from .signals import analyze_signals
+from .survey import investigate_recording as survey_recording
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Media results may be visible to the AI provider.')
 
@@ -65,6 +66,11 @@ def inspect_region(path: str, box: list[float], time_s: float = 0) -> Image:
 def sense_signals(path: str, time_column: str, channels: list[str], change_thresholds: dict[str,float] | None = None) -> dict:
     """Analyze authorized numeric UTF-8 CSV sensor logs: explicit seconds column, 1–8 value columns, optional adjacent-change thresholds in channel units. Return statistics, event times and paired-row correlations. No live device access or calibration."""
     return analyze_signals(resolve_media(path,allow_csv=True),time_column,channels,change_thresholds)
+
+@mcp.tool()
+def investigate_recording(path: str, start_s: float = 0, span_s: float = 60, max_windows: int = 5, max_refinements: int = 2) -> dict:
+    """Perform a bounded coarse-to-fine local media survey (0.25–1800 s span). Sample at most five 6-second windows and refine up to two 4-second windows. Return ranked observations, gaps and failures; not exhaustive or causal."""
+    return survey_recording(resolve_media(path),start_s,span_s,max_windows,max_refinements)
 
 def main():
     mcp.run(transport='stdio')
