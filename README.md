@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.1.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.2.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -26,7 +26,7 @@ Most AI assistants can reason about a description. But descriptions alone cannot
 **SEA gives your agent access to the measurements themselves.** It is a local Model Context Protocol (MCP) extension, not another chatbot. Connect it to your existing assistant, select a recording, and ask a question.
 
 > [!NOTE]
-> SEA is an early open-source prototype. Audio and video measurements are implemented; broader sensory modalities, automated installation and semantic sound recognition are not yet available. Check the [live test results](https://github.com/PCTestAdmin/SEA/actions/workflows/test.yml) for platform verification.
+> SEA is an early open-source prototype. Audio and video measurements are implemented; broader sensory modalities, one-click desktop packages and semantic sound recognition are not yet available. Check the [live test results](https://github.com/PCTestAdmin/SEA/actions/workflows/test.yml) for platform verification.
 
 ## Quick start
 
@@ -38,7 +38,16 @@ cd SEA
 python -m pip install .
 ```
 
-Connect your agent using the [installation guide](docs/installation.md). SEA runs over local MCP stdio and requires no server account or API key.
+Create a dedicated media directory, close the client and run:
+
+```bash
+sea doctor
+sea setup --client claude-desktop --media-root "/absolute/path/to/media"
+```
+
+Review the preview, then repeat with `--apply` to register SEA. Existing settings are preserved and the original config is backed up. Restart the client. Use `--client cursor` for Cursor, or `--config` for a compatible custom JSON configuration. Claude Desktop automatic path detection is limited to Windows and macOS.
+
+Alternatively, install into a persistent isolated environment with `pipx install git+https://github.com/PCTestAdmin/SEA.git` (requires pipx and Git). SEA is not published on PyPI yet. See the [installation guide](docs/installation.md) for updates, troubleshooting and manual setup. No SEA account or API key is needed.
 
 <details>
 <summary><strong>Claude Desktop — configuration example</strong></summary>
@@ -168,6 +177,7 @@ See [installation and usage details](docs/installation.md).
 - [x] Local audio and video analysis engine
 - [x] Structured MCP tool implementation
 - [x] Reproducible audiovisual example
+- [x] Preview-first client registration, backups and prerequisite checks
 - [ ] Verified client integration and cross-platform installation
 - [ ] One-click extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
@@ -188,7 +198,7 @@ No. SEA adds media analysis tools to an existing assistant. It does not replace 
 <details>
 <summary><strong>Can I use it with Claude, Cursor or Codex?</strong></summary>
 
-SEA exposes a local MCP stdio server. Clients that support this transport can be configured manually. The current prototype does not claim verified compatibility with every client or platform; see the [setup guide](docs/installation.md).
+SEA exposes a local MCP stdio server. SEA provides configuration helpers for Claude Desktop and Cursor; compatible clients can also be configured manually. The current prototype does not claim verified compatibility with every client or platform; see the [setup guide](docs/installation.md).
 
 </details>
 

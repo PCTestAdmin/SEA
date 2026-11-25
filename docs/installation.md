@@ -19,7 +19,25 @@ python -c "import sys; print(sys.executable)"
 
 The last command prints the interpreter path to use in your MCP configuration. A virtual environment is recommended.
 
-## Connect to an MCP client
+## Guided setup (v0.2)
+
+Install SEA into a persistent environment (not a temporary package runner). You can also use `pipx install git+https://github.com/PCTestAdmin/SEA.git` if pipx and Git are installed.
+
+Create your dedicated media directory first, then close the MCP client and run:
+
+```bash
+sea doctor
+sea setup --client claude-desktop --media-root "/absolute/path/to/media"
+sea setup --client claude-desktop --media-root "/absolute/path/to/media" --apply
+```
+
+The first setup command is a preview only. Review its output before applying. Windows users can substitute a quoted path such as `C:\Users\YOU\SEA-Media`. For Cursor use `--client cursor` (global MCP config). Claude Desktop default paths are supported on Windows and macOS; elsewhere use `--config /absolute/path/to/config.json` with a compatible JSON schema.
+
+Existing unrelated settings and MCP entries are preserved semantically; the JSON formatting may change. The exact previous bytes are saved in a uniquely named .bak file next to the config before replacement. Backups can contain existing credentials; keep them private. Invalid JSON, duplicate keys, symlink config files and differing SEA entries are refused by default. `--replace` explicitly authorizes replacing only the SEA entry. Close the client during setup; concurrent edits are not supported. Setup does not install FFmpeg or start the client. Restart your client afterward. `sea doctor` only checks prerequisite discoverability, not a live MCP connection.
+
+To undo registration, close the client and remove only the sea entry from mcpServers; alternatively restore the backup if no later configuration edits need preserving. Keep a copy of the current config first. To update a pipx install, use `pipx upgrade sea-perception-mcp`; for a source install, pull the latest code and reinstall using the same interpreter. Repeat setup if its interpreter path changes.
+
+## Manual connection to an MCP client
 
 Create an existing dedicated folder for media you want the agent to access. Set `SEA_MEDIA_ROOTS` to that folder. Multiple roots can be separated using the OS path separator (semicolon on Windows, colon on Unix). Do not configure your entire home directory.
 
@@ -96,4 +114,4 @@ python -m pip install .
 python -m unittest discover -s tests -v
 ```
 
-The integration test uses a real MCP SDK stdio client; it skips if the SDK is absent locally. CI explicitly imports the SDK before running the tests. The current prototype does not include a one-click extension or published package.
+The integration test uses a real MCP SDK stdio client; it skips if the SDK is absent locally. CI explicitly imports the SDK before running the tests. The current prototype includes a setup helper but no .mcpb extension or public PyPI package.
