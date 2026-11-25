@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.4.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.5.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -182,6 +182,8 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `compare_recordings` | Numeric differences between equally long audio segments |
 | `sense_video` | Sampled visual activity, histogram shifts, change regions and static intervals |
 | `investigate_media` | Evidence-indexed multimodal report, temporal matches and frame follow-ups |
+| `inspect_spatial` | Image-space grid, regional color and contrast measurements |
+| `inspect_region` | PNG crop of a selected normalized image region |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -190,6 +192,7 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | :--- | :--- |
 | Audio | WAV, MP3, FLAC, M4A, OGG, OPUS |
 | Video | MP4, MOV, MKV, WebM |
+| Still images | PNG, JPEG (spatial tools only) |
 | Maximum file size | 2 GiB |
 | Analysis window | 0.25–120 s visual, 0.25–30 s acoustic/investigation, 0.25–60 s combined legacy tool |
 | Audio sampling | First audio stream, mono, 16 kHz |
@@ -220,7 +223,8 @@ See [installation and usage details](docs/installation.md).
 - [ ] More precise timestamp alignment and labeled benchmarks
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
 - [x] Evidence-indexed multimodal investigation and sampled visual change regions
-- [ ] Spatial and sensor modalities
+- [x] Image-space spatial analysis and region inspection
+- [ ] Physical depth and sensor modalities
 
 The long-term goal is a modular perception layer for AI agents. We prioritize features that yield observable, testable information rather than adding tools for their own sake.
 
@@ -266,6 +270,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Spatial analysis](docs/spatial.md) | Image grids, normalized regions and crops |
 | [Multimodal investigation](docs/investigation.md) | Visual measurements, correlation and follow-up workflow |
 | [Acoustic analysis](docs/acoustics.md) | Spectrograms, measurements, comparisons and limitations |
 | [Example evidence](examples/demo-report.json) | Structured demo output |

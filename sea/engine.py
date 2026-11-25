@@ -19,7 +19,10 @@ FORMATS = {'.wav':'wav', '.mp3':'mp3', '.flac':'flac', '.mp4':'mov', '.mov':'mov
            '.m4a':'mov', '.mkv':'matroska', '.webm':'matroska', '.ogg':'ogg', '.opus':'ogg'}
 
 
-def resolve_media(path: str) -> Path:
+IMAGE_FORMATS = {'.png':'png_pipe', '.jpg':'jpeg_pipe', '.jpeg':'jpeg_pipe'}
+
+
+def resolve_media(path: str, *, allow_image: bool = False, allow_csv: bool = False) -> Path:
     roots = [Path(p).expanduser().resolve(strict=True) for p in os.environ.get('SEA_MEDIA_ROOTS','').split(os.pathsep) if p.strip()]
     if not roots or any(not r.is_dir() for r in roots):
         raise ValueError('Set SEA_MEDIA_ROOTS to one or more existing media directories before using SEA.')
@@ -32,7 +35,7 @@ def resolve_media(path: str) -> Path:
     info = p.stat()
     if not stat.S_ISREG(info.st_mode) or not 0 < info.st_size <= MAX_FILE:
         raise ValueError('Expected a regular non-empty media file no larger than 2 GiB.')
-    if p.suffix.lower() not in FORMATS:
+    if p.suffix.lower() not in FORMATS and not (allow_image and p.suffix.lower() in IMAGE_FORMATS) and not (allow_csv and p.suffix.lower()=='.csv'):
         raise ValueError('Unsupported media extension.')
     return p
 
@@ -59,7 +62,7 @@ def run(binary: str, args: list[str], cap: int, timeout: int = 45) -> bytes:
 
 def input_args(p: Path) -> list[str]:
     # Whitelist demuxers; refuse playlists and network protocols.
-    return ['-protocol_whitelist','file,pipe','-f',FORMATS[p.suffix.lower()], str(p)]
+    return ['-protocol_whitelist','file,pipe','-f',(FORMATS | IMAGE_FORMATS)[p.suffix.lower()], str(p)]
 
 
 def probe(p: Path) -> dict:
@@ -84,9 +87,9 @@ def window(start: float, seconds: float, max_seconds=60) -> tuple[float,float]:
     return start,seconds
 
 
-def decode(p: Path, start: float, seconds: float, options: list[str], cap: int) -> bytes:
+def decode(p: Path, start: float, seconds: float, options: list[str], cap: int, *, autorotate: bool = True) -> bytes:
     return run('ffmpeg',['-hide_banner','-loglevel','error','-nostdin','-max_alloc','134217728',
-               '-threads','2','-ss',str(start),*input_args(p)[:-1],'-i',str(p),'-t',str(seconds),
+               '-threads','2','-ss',str(start),*input_args(p)[:-1],*([] if autorotate else ['-noautorotate']),'-i',str(p),'-t',str(seconds),
                '-filter_threads','1','-threads','2',*options,'pipe:1'],cap)
 
 

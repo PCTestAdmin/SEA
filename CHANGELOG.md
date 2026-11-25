@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+- Image-space spatial grids, regional color/contrast metrics and normalized region crops.
+- PNG/JPEG input for spatial tools; video frame support.
+- Spatial unit and MCP integration tests; no physical distance or depth inference.
+
 ## 0.4.0
 
 - Sampled visual activity, large global changes, histogram shifts, normalized change regions and low-change intervals.

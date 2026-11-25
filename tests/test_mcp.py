@@ -24,7 +24,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -46,3 +46,13 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(data['available_modalities'],{'audio':True,'video':False})
                     result=await session.call_tool('sense_video',{'path':str(wav),'duration_s':1})
                     self.assertTrue(result.isError)
+
+                    from sea.acoustics import png
+                    import numpy as np
+                    still=Path(tmp)/'still.png'
+                    still.write_bytes(png(np.zeros((32,32,3),dtype=np.uint8)))
+                    result=await session.call_tool('inspect_spatial',{'path':str(still)})
+                    self.assertFalse(result.isError)
+                    result=await session.call_tool('inspect_region',{'path':str(still),'box':[0,0,.5,.5]})
+                    self.assertFalse(result.isError)
+                    self.assertTrue(any(c.type=='image' for c in result.content))

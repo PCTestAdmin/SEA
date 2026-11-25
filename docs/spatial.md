@@ -1,0 +1,3 @@
+# Image-space spatial perception
+
+`inspect_spatial(path,time_s=0,grid_size=3)` returns a grid of 2–6 cells per axis with normalized bounds, mean RGB, approximate luma and adjacent-pixel contrast density. `inspect_region(path,box,time_s=0)` returns a PNG crop of the same sample. Still images must use time_s=0. PNG and JPEG are supported only by the spatial tools. Video offsets are approximate. Samples preserve coded aspect ratio, without autorotation, up to 512 pixels on the long edge; source dimensions are limited to 40 megapixels. Coordinates refer to this sample, not real-world distances. No object detection, depth or physical measurements. Image results may be transmitted by the MCP host. See [tests](../tests/test_spatial.py).

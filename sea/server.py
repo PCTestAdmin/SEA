@@ -3,6 +3,7 @@ from mcp.server.fastmcp import FastMCP, Image
 from .engine import resolve_media, probe, analyze, frame
 from .acoustics import analyze_audio, compare_audio, spectrogram
 from .vision import analyze_video, investigate
+from .spatial import sense_spatial, crop_region
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Media results may be visible to the AI provider.')
 
@@ -48,6 +49,16 @@ def sense_video(path: str, start_s: float = 0, duration_s: float = 30) -> dict:
 def investigate_media(path: str, start_s: float = 0, duration_s: float = 15, tolerance_s: float = .5) -> dict:
     """Build an evidence-indexed audio/video investigation report (0.25–30 s). Correlate nearby level transitions and visual changes, then suggest frame timestamps. Proximity is not causation; interpret only with evidence."""
     return investigate(resolve_media(path),start_s,duration_s,tolerance_s)
+
+@mcp.tool()
+def inspect_spatial(path: str, time_s: float = 0, grid_size: int = 3) -> dict:
+    """Measure image-space layout, regional colors and contrast in a local PNG/JPEG or video frame. Normalized image coordinates, no physical depth or object recognition."""
+    return sense_spatial(resolve_media(path,allow_image=True),time_s,grid_size)
+
+@mcp.tool()
+def inspect_region(path: str, box: list[float], time_s: float = 0) -> Image:
+    """Return a PNG crop of the downsampled visual sample. Box [left,top,right,bottom], normalized 0–1. Image goes to the MCP host/model."""
+    return Image(data=crop_region(resolve_media(path,allow_image=True),time_s,box),format='png')
 
 def main():
     mcp.run(transport='stdio')

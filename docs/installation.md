@@ -71,7 +71,7 @@ In Claude Desktop, open the local MCP config (Settings > Developer > Edit Config
 }
 ```
 
-Restart the MCP client and verify that SEA exposes eight tools: inspect_media, sense_media, view_frame, sense_audio, audio_spectrogram, compare_recordings, sense_video and investigate_media. Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
+Restart the MCP client and verify that SEA exposes ten tools, including inspect_spatial and inspect_region. See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
 
 ## Command-line usage
 
