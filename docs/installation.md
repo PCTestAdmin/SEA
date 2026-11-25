@@ -19,7 +19,7 @@ python -c "import sys; print(sys.executable)"
 
 The last command prints the interpreter path to use in your MCP configuration. A virtual environment is recommended.
 
-## Guided setup (v0.2)
+## Guided setup (v0.2+)
 
 Install SEA into a persistent environment (not a temporary package runner). You can also use `pipx install git+https://github.com/PCTestAdmin/SEA.git` if pipx and Git are installed.
 
@@ -71,7 +71,7 @@ In Claude Desktop, open the local MCP config (Settings > Developer > Edit Config
 }
 ```
 
-Restart the MCP client and verify that SEA exposes three tools: inspect_media, sense_media, view_frame. Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
+Restart the MCP client and verify that SEA exposes six tools: inspect_media, sense_media, view_frame, sense_audio, audio_spectrogram and compare_recordings. Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
 
 ## Command-line usage
 

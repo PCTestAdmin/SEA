@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.2.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.3.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -108,6 +108,18 @@ python examples/make_demo.py /absolute/path/to/media/demo.mp4
 
 [Demo generator](examples/make_demo.py) · [Recorded JSON evidence](examples/demo-report.json) · [Test assertions](tests/test_engine.py)
 
+### New in v0.3 — acoustic evidence
+
+Ask your agent to locate level changes, inspect frequency peaks and compare two equally long recording segments. SEA returns 100 ms level measurements, a time-frequency image and numeric differences rather than a guessed sound label.
+
+```text
+Use SEA to analyze this recording. Locate abrupt level changes,
+inspect the spectrogram, and compare it with my reference recording.
+Distinguish measured differences from possible explanations.
+```
+
+[Acoustic analysis guide](docs/acoustics.md) · [Reproducible acoustic tests](tests/test_acoustics.py)
+
 ## What could you use SEA for?
 
 <table>
@@ -145,6 +157,9 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `inspect_media` | Duration, stream metadata and codecs |
 | `sense_media` | Audio levels, dominant frequency, quiet intervals and video differences on a half-second timeline |
 | `view_frame` | A PNG near a requested video timestamp |
+| `sense_audio` | Spectral peaks, band power, 100 ms levels and threshold events |
+| `audio_spectrogram` | Time-frequency PNG for visual investigation |
+| `compare_recordings` | Numeric differences between equally long audio segments |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -181,7 +196,7 @@ See [installation and usage details](docs/installation.md).
 - [ ] Verified client integration and cross-platform installation
 - [ ] One-click extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
-- [ ] Spectrograms, audio event localization and recording comparisons
+- [x] Spectrograms, threshold-based audio event localization and recording comparisons
 - [ ] Spatial and sensor modalities
 
 The long-term goal is a modular perception layer for AI agents. We prioritize features that yield observable, testable information rather than adding tools for their own sake.
@@ -228,6 +243,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Acoustic analysis](docs/acoustics.md) | Spectrograms, measurements, comparisons and limitations |
 | [Example evidence](examples/demo-report.json) | Structured demo output |
 | [Development tests](tests/) | Engine and MCP integration tests |
 | [License](LICENSE) | MIT |

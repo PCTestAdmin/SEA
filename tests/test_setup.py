@@ -29,14 +29,14 @@ class SetupTests(unittest.TestCase):
         self.assertFalse(list(self.config.parent.glob('*.bak')))
 
     def test_preserve_and_backup(self):
-        original = b'{"mcpServers":{"other":{"command":"custom","env":{"TOKEN":"private"}}},"theme":"dark"}\n'
+        original = b'{"mcpServers":{"other":{"command":"custom","env":{"TOKEN":"SEA_TEST_SECRET_8274"}}},"theme":"dark"}\n'
         self.write(original)
         result = register(self.config, self.media, apply=True)
         self.assertEqual(Path(result['backup']).read_bytes(), original)
         current = json.loads(self.config.read_text())
         self.assertEqual(current['mcpServers']['other'], json.loads(original)['mcpServers']['other'])
         self.assertEqual(current['theme'], 'dark')
-        self.assertNotIn('private', json.dumps(result))
+        self.assertNotIn('SEA_TEST_SECRET_8274', json.dumps(result))
 
     def test_conflict(self):
         original = b'{"mcpServers":{"sea":{"command":"different"}}}'
@@ -62,5 +62,5 @@ class SetupTests(unittest.TestCase):
             media_root(str(self.root / 'absent'))
 
     def test_doctor(self):
-        self.assertEqual(doctor(self.media)['version'], '0.2.0')
+        self.assertEqual(doctor(self.media)['version'], '0.3.0')
         self.assertTrue(doctor(self.media)['checks']['media_root'])

@@ -1,6 +1,7 @@
 """MCP stdio entry point; SEA never opens a listening socket."""
 from mcp.server.fastmcp import FastMCP, Image
 from .engine import resolve_media, probe, analyze, frame
+from .acoustics import analyze_audio, compare_audio, spectrogram
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Media results may be visible to the AI provider.')
 
@@ -21,6 +22,21 @@ def view_frame(path: str, time_s: float) -> Image:
     if not data.startswith(b'\x89PNG\r\n\x1a\n'):
         raise ValueError('No frame found at requested time.')
     return Image(data=data,format='png')
+
+@mcp.tool()
+def sense_audio(path: str, start_s: float = 0, duration_s: float = 15) -> dict:
+    """Measure spectral peaks, band power, 100 ms levels and fixed-threshold level events in an authorized local recording (0.25–30 s). No sound identification."""
+    return analyze_audio(resolve_media(path), start_s, duration_s)
+
+@mcp.tool()
+def audio_spectrogram(path: str, start_s: float = 0, duration_s: float = 15, max_hz: int = 8000) -> Image:
+    """Return a spectrogram PNG of an authorized local segment (0.25–30 s). Time left to right, frequency bottom 0 Hz to top floor(max_hz/15.625)*15.625 Hz. Dark navy -90 dBFS to pale yellow 0 dBFS, Hann amplitude estimates; up to 900 time columns. Use sense_audio for numeric evidence. Image is sent to the host/model."""
+    return Image(data=spectrogram(resolve_media(path), start_s, duration_s, max_hz), format='png')
+
+@mcp.tool()
+def compare_recordings(path_a: str, path_b: str, start_a_s: float = 0, start_b_s: float = 0, duration_s: float = 15) -> dict:
+    """Compare equally long authorized local audio segments (0.25–30 s). Differences are B minus A; no automatic alignment or quality judgment."""
+    return compare_audio(resolve_media(path_a), resolve_media(path_b), start_a_s, start_b_s, duration_s)
 
 def main():
     mcp.run(transport='stdio')
