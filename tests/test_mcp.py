@@ -24,7 +24,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -56,3 +56,10 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     result=await session.call_tool('inspect_region',{'path':str(still),'box':[0,0,.5,.5]})
                     self.assertFalse(result.isError)
                     self.assertTrue(any(c.type=='image' for c in result.content))
+
+                    csv=Path(tmp)/'signals.csv'
+                    csv.write_text('t,x,y\n0,1,2\n1,2,4\n',encoding='utf-8')
+                    result=await session.call_tool('sense_signals',{'path':str(csv),'time_column':'t','channels':['x','y']})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    self.assertEqual(data['same_row_correlations'][0]['pearson_r'],1)

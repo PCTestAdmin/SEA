@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.5.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.6.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -26,7 +26,7 @@ Most AI assistants can reason about a description. But descriptions alone cannot
 **SEA gives your agent access to the measurements themselves.** It is a local Model Context Protocol (MCP) extension, not another chatbot. Connect it to your existing assistant, select a recording, and ask a question.
 
 > [!NOTE]
-> SEA is an early open-source prototype. Audio and video measurements are implemented; broader sensory modalities, one-click desktop packages and semantic sound recognition are not yet available. Check the [live test results](https://github.com/PCTestAdmin/SEA/actions/workflows/test.yml) for platform verification.
+> SEA is an early open-source prototype. Audio, video, image-space and recorded sensor measurements are implemented; live sensors, one-click desktop packages and semantic sound recognition are not yet available. Check the [live test results](https://github.com/PCTestAdmin/SEA/actions/workflows/test.yml) for platform verification.
 
 ## Quick start
 
@@ -184,6 +184,7 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `investigate_media` | Evidence-indexed multimodal report, temporal matches and frame follow-ups |
 | `inspect_spatial` | Image-space grid, regional color and contrast measurements |
 | `inspect_region` | PNG crop of a selected normalized image region |
+| `sense_signals` | Numeric sensor CSV statistics, change events and correlations |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -193,6 +194,7 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | Audio | WAV, MP3, FLAC, M4A, OGG, OPUS |
 | Video | MP4, MOV, MKV, WebM |
 | Still images | PNG, JPEG (spatial tools only) |
+| Sensor logs | Numeric UTF-8 CSV, up to 2 MiB / 20,000 rows |
 | Maximum file size | 2 GiB |
 | Analysis window | 0.25–120 s visual, 0.25–30 s acoustic/investigation, 0.25–60 s combined legacy tool |
 | Audio sampling | First audio stream, mono, 16 kHz |
@@ -224,7 +226,8 @@ See [installation and usage details](docs/installation.md).
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
 - [x] Evidence-indexed multimodal investigation and sampled visual change regions
 - [x] Image-space spatial analysis and region inspection
-- [ ] Physical depth and sensor modalities
+- [x] Numeric sensor-log analysis and paired-channel correlations
+- [ ] Physical depth and live sensor integration
 
 The long-term goal is a modular perception layer for AI agents. We prioritize features that yield observable, testable information rather than adding tools for their own sake.
 
@@ -270,6 +273,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Sensor signals](docs/signals.md) | CSV schema, thresholds and paired-channel analysis |
 | [Spatial analysis](docs/spatial.md) | Image grids, normalized regions and crops |
 | [Multimodal investigation](docs/investigation.md) | Visual measurements, correlation and follow-up workflow |
 | [Acoustic analysis](docs/acoustics.md) | Spectrograms, measurements, comparisons and limitations |

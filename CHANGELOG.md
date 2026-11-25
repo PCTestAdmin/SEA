@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+- Numeric CSV sensor-log analysis with explicit seconds and channel selection.
+- Per-channel summaries, bounded adjacent-change evidence, optional thresholds and same-row Pearson correlation.
+- Four signal tests and an additional MCP round trip; no live device access.
+
 ## 0.5.0
 
 - Image-space spatial grids, regional color/contrast metrics and normalized region crops.

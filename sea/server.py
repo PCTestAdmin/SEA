@@ -4,6 +4,7 @@ from .engine import resolve_media, probe, analyze, frame
 from .acoustics import analyze_audio, compare_audio, spectrogram
 from .vision import analyze_video, investigate
 from .spatial import sense_spatial, crop_region
+from .signals import analyze_signals
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Media results may be visible to the AI provider.')
 
@@ -59,6 +60,11 @@ def inspect_spatial(path: str, time_s: float = 0, grid_size: int = 3) -> dict:
 def inspect_region(path: str, box: list[float], time_s: float = 0) -> Image:
     """Return a PNG crop of the downsampled visual sample. Box [left,top,right,bottom], normalized 0–1. Image goes to the MCP host/model."""
     return Image(data=crop_region(resolve_media(path,allow_image=True),time_s,box),format='png')
+
+@mcp.tool()
+def sense_signals(path: str, time_column: str, channels: list[str], change_thresholds: dict[str,float] | None = None) -> dict:
+    """Analyze authorized numeric UTF-8 CSV sensor logs: explicit seconds column, 1–8 value columns, optional adjacent-change thresholds in channel units. Return statistics, event times and paired-row correlations. No live device access or calibration."""
+    return analyze_signals(resolve_media(path,allow_csv=True),time_column,channels,change_thresholds)
 
 def main():
     mcp.run(transport='stdio')

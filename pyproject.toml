@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sea-perception-mcp"
-version = "0.5.0"
-description = "Sensory Extension for Agents: local, measurable audiovisual perception for MCP clients"
+version = "0.6.0"
+description = "Sensory Extension for Agents: local, measurable media and signal perception for MCP clients"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
