@@ -6,7 +6,7 @@ from pathlib import Path
 import wave
 import numpy as np
 from PIL import Image, ImageDraw
-from .engine import run, input_args, decode, audio_features, RATE
+from .engine import run, input_args, decode, audio_features, RATE, AUDIO_COVERAGE_TOLERANCE_S
 from .video_understanding import source, source_revision, plan_page, sample_frames
 from .spatial import region_pixels
 from .images import compare_pixels
@@ -164,7 +164,7 @@ def scan_page(p,segment_seconds=8,cursor=0,page_size=2,sample_fps=4,expected_rev
         if meta['audio']:
             try:
                 summary,bins=audio_features(p,a,b-a)
-                row.update(audio_status='measured' if summary['analyzed_s']>=b-a-.03 else 'partial',
+                row.update(audio_status='measured' if summary['analyzed_s']>=b-a-AUDIO_COVERAGE_TOLERANCE_S else 'partial',
                            audio=summary,audio_bins=bins)
             except (ValueError,RuntimeError,OSError) as exc:
                 row['audio_error']=type(exc).__name__

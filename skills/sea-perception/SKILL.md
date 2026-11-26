@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires separately installed SEA MCP server v0.23 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
 metadata:
   author: PCTestAdmin
-  version: "0.23.2"
+  version: "0.23.3"
 ---
 
 # SEA perception

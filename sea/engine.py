@@ -13,6 +13,8 @@ import numpy as np
 
 MAX_FILE = 2 * 1024**3
 RATE = 16000
+# Maximum reported audio-duration shortfall for a measured video segment.
+AUDIO_COVERAGE_TOLERANCE_S = .03
 FPS = 4
 WIDTH, HEIGHT = 160, 90
 FORMATS = {'.wav':'wav', '.mp3':'mp3', '.flac':'flac', '.mp4':'mov', '.mov':'mov',

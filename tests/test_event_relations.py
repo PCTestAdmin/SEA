@@ -67,6 +67,32 @@ class EventRelationsTests(unittest.TestCase):
         self.assertEqual(only['missing_ranges'][0]['start_s'],0)
         self.assertFalse(any(e['time_s']==4 for e in only['events']))
 
+    def test_measured_audio_boundary_gap(self):
+        # A small decoder shortfall is already permitted by scan_page.
+        # Retain a cross-modal transition, but expose its unobserved interval.
+        for gap in (.016,.03,.031,.08):
+            with self.subTest(gap=gap):
+                a=copy.deepcopy(self.a)
+                b=copy.deepcopy(self.b)
+                left=a['record']['normalized_result']['results'][0]
+                right=b['record']['normalized_result']['results'][0]
+                left['audio_bins'][-1].update(end_s=round(4-gap,3),low_level=False)
+                left['audio']['analyzed_s']=round(4-gap,3)
+                right['audio_bins'][0]['low_level']=True
+                r=relate([rehash(a),rehash(b)])
+                transitions=[e for e in r['events'] if e['kind']=='audio_became_low' and e['time_s']==4]
+                cuts=[e for e in r['events'] if e['kind']=='scene_change_candidate' and e['time_s']==4]
+                self.assertEqual(len(cuts),1)
+                links=[x for x in cuts[0]['relations'] if x['kind']=='near_audio_transition']
+                if gap<=.03:
+                    self.assertEqual(len(transitions),1)
+                    self.assertEqual(transitions[0]['unobserved_gap_s'],gap)
+                    self.assertEqual(transitions[0]['gap_range_s'],[round(4-gap,3),4])
+                    self.assertEqual(links[0]['unobserved_audio_gap_s'],gap)
+                else:
+                    self.assertEqual(transitions,[])
+                    self.assertEqual(links,[])
+
     def test_invalid_and_incomplete(self):
         a=copy.deepcopy(self.a)
         a['record']['normalized_result']['results'][0]['comparisons'][0].pop('changed_tiles_4x4')

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.23.3
+
+- Fix inconsistent audio coverage and event-relation boundaries: measured segments already allowed up to 30 ms of decoder shortfall, but relation detection required contiguous bins within about 1 ms. Preserve observed level changes across joined measured segments only within the existing coverage tolerance, explicitly expose the unobserved gap on the event and its visual link, and never fill missing samples.
+- Add boundary regression tests for 16, 30, 31 and 80 ms gaps and include segment diagnostics in the real MP4 relation assertion. Keep the original visual/audio coverage and event assertions. The macOS v0.23.2 failure had complete reported coverage and both scene cuts but lacked one audio relation; the exact bin gap was not printed, so this fix addresses an identified consistency issue and remains subject to CI verification.
+
 ## 0.23.2
 
 - Freeze a small, SHA-256-verified MPEG-4/AAC smoke fixture instead of encoding it on every CI runner. The file contains exactly six seconds of video and 48 kHz mono audio; tests still decode real MP4 and require both scene changes, complete sampled audio/video coverage and cross-modal transitions.

@@ -109,7 +109,7 @@ class BenchmarkTests(unittest.TestCase):
         cuts=[e for e in r['events'] if e['kind']=='scene_change_candidate']
         self.assertEqual([e['time_s'] for e in cuts],[2.,4.],json.dumps(r))
         self.assertTrue(all(any(link['kind']=='near_audio_transition' for link in e['relations'])
-                            for e in cuts),json.dumps(r))
+                            for e in cuts),json.dumps({'relations':r,'segments':rows}))
 
     def test_cli(self):
         out=self.root/'frozen'

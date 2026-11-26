@@ -2,6 +2,7 @@
 from __future__ import annotations
 import math
 from .analysis import audit_video_coverage
+from .engine import AUDIO_COVERAGE_TOLERANCE_S
 
 MAX_EVENT_PAGE=100
 VISUAL_GAP_S=2.0
@@ -96,10 +97,19 @@ def relate(evidence_pages,offset=0,limit=50):
             if (not close(a,start+i*.5) or not finite_number(z) or not a<z<=end+.031
                     or z-a>.5011 or type(low) is not bool):
                 raise ValueError('Invalid audio bin bounds or level flag.')
-            if previous_audio is not None and close(previous_audio['end_s'],a) and low!=previous_audio['low_level']:
+            # A measured segment may have a small trailing decoder shortfall.
+            # Only bridge that permitted gap at a joined segment boundary.
+            # Do not synthesize samples or claim an exact transition time.
+            gap=round(a-previous_audio['end_s'],3) if previous_audio is not None else None
+            bounded_gap=(gap is not None and i==0 and joined
+                         and 0<gap<=AUDIO_COVERAGE_TOLERANCE_S)
+            if previous_audio is not None and (close(previous_audio['end_s'],a) or bounded_gap) and low!=previous_audio['low_level']:
                 event={'id':f'A{index+1:06d}:{i:02d}','segment_id':row['id'],
                        'evidence_id':evidence_id,'time_s':a,
                        'kind':'audio_became_low' if low else 'audio_left_low_level','relations':[]}
+                if bounded_gap and not close(previous_audio['end_s'],a):
+                    event['unobserved_gap_s']=gap
+                    event['gap_range_s']=[previous_audio['end_s'],a]
                 events.append(event)
                 audio_by_run.setdefault(run,[]).append(event)
             previous_audio=b
@@ -107,8 +117,11 @@ def relate(evidence_pages,offset=0,limit=50):
         candidates=[a for a in audio_by_run.get(run,[]) if abs(a['time_s']-event['time_s'])<=AUDIO_TOLERANCE_S]
         if candidates:
             best=min(candidates,key=lambda a:(abs(a['time_s']-event['time_s']),a['time_s'],a['id']))
-            event['relations'].append({'kind':'near_audio_transition','target_id':best['id'],
-                                       'audio_minus_visual_s':round(best['time_s']-event['time_s'],3)})
+            link={'kind':'near_audio_transition','target_id':best['id'],
+                  'audio_minus_visual_s':round(best['time_s']-event['time_s'],3)}
+            if 'unobserved_gap_s' in best:
+                link['unobserved_audio_gap_s']=best['unobserved_gap_s']
+            event['relations'].append(link)
     events.sort(key=lambda e:(e['time_s'],e['id']))
     if offset>len(events):
         raise ValueError('Offset beyond event collection.')
@@ -121,11 +134,13 @@ def relate(evidence_pages,offset=0,limit=50):
             'events':events[offset:stop],
             'thresholds':{'tile_grid':[4,4],'tile_changed_fraction':.10,'pixel_delta':25,
                           'global_changed_fraction':.05,'visual_gap_s':VISUAL_GAP_S,
-                          'audio_tolerance_s':AUDIO_TOLERANCE_S,'audio_low_level_rms':.01},
+                          'audio_tolerance_s':AUDIO_TOLERANCE_S,'audio_low_level_rms':.01,
+                          'audio_boundary_gap_tolerance_s':AUDIO_COVERAGE_TOLERANCE_S},
             'limitations':['Only supplied complete sampled segments are used. Missing, partial or failed segments break continuity.',
                            'Boundary comparisons are omitted if the preceding submitted segment is unavailable.',
                            'Tiles are zero-based row-major in padded sample coordinates. Overlap is not object identity or tracking.',
                            'Visual differences can reflect camera motion, lighting, cuts or compression.',
                            'Audio low-level changes use 0.5 s bins; timestamps are approximate. Proximity is not causation.',
+                           'Adjacent measured segments may have a decoder shortfall of at most 30 ms. Such boundary transitions explicitly report unobserved gaps; no missing samples are inferred.',
                            'Links target event IDs in the same input batch, possibly on another output page.',
                            'This is not a semantic event detector, native-frame coverage or source authentication.']}
