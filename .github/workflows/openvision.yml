@@ -1,5 +1,13 @@
 name: Open Vision model test
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'sea/openvision.py'
+      - 'tests/test_openvision.py'
+      - 'pyproject.toml'
+      - '.github/workflows/openvision.yml'
 permissions:
   contents: read
 jobs:

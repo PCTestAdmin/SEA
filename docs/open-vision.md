@@ -24,4 +24,4 @@ Tools:
 
 Model predictions are uncertain, not verified facts or probabilities. No identities, tracking, metric depth, guaranteed counts, or absence claims. Multiple labels may describe the same object. Use OCR for screenshot text and fixed templates for known icons. This is not general visual question answering.
 
-Core unit tests run on each push. The [Open Vision model test](https://github.com/PCTestAdmin/SEA/actions/workflows/openvision.yml) is manually triggered because of model download size. It checks the recommended checkpoint against a public cat fixture; this is not an accuracy benchmark.
+Core unit tests run on each push. The [Open Vision model test](https://github.com/PCTestAdmin/SEA/actions/workflows/openvision.yml) runs on relevant main-branch changes and can also be manually triggered; documentation-only changes do not download the model. It checks the recommended checkpoint against a public cat fixture; this is not an accuracy benchmark.
