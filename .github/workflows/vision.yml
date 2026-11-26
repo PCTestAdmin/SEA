@@ -13,6 +13,7 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
       - run: python -m pip install ".[vision]"
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Fetch explicit public test inputs
         run: |
           curl --fail --location --retry 2 --max-time 90 https://download.pytorch.org/models/ssdlite320_mobilenet_v3_large_coco-a79551df.pth -o "$RUNNER_TEMP/sea-weights.pth"
@@ -20,6 +21,10 @@ jobs:
           echo "SEA_VISION_WEIGHTS=$RUNNER_TEMP/sea-weights.pth" >> "$GITHUB_ENV"
           echo "SEA_VISION_TEST_IMAGE=$RUNNER_TEMP/cats.png" >> "$GITHUB_ENV"
       - run: python -m unittest discover -s tests -p test_detector.py -v
+        env:
+          OMP_NUM_THREADS: '2'
+          MKL_NUM_THREADS: '2'
+      - run: python -m unittest discover -s tests -p test_tracking.py -v
         env:
           OMP_NUM_THREADS: '2'
           MKL_NUM_THREADS: '2'

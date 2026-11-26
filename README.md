@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.11.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.12.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -187,7 +187,7 @@ and explain which predictions need human verification.
 
 [Enable Vision AI](docs/vision-ai.md) · [Detector tests](tests/test_detector.py)
 
-### New in v0.11 — Open Vision
+### Open Vision
 
 Find visual objects using short text descriptions instead of a fixed label catalog. Optional local OWLv2 returns ranked matches and normalized regions, with an annotated image for verification. English short descriptions work best. No automatic model downloads.
 
@@ -197,6 +197,17 @@ Show the matching regions and explain uncertain predictions.
 ```
 
 [Open Vision setup](docs/open-vision.md) · [Tests](tests/test_openvision.py)
+
+### New in v0.12 — Object Tracking
+
+Follow tentative COCO object tracks across sampled video frames. SEA links mutually unique, overlapping same-class detections, reports normalized movement, and breaks tracks when matching becomes ambiguous. Inspect an annotated contact sheet to verify the observations.
+
+```text
+Track the cat in my video using SEA. Show the sampled frames,
+where the detected object moved, and where tracking was interrupted.
+```
+
+[Object Tracking guide](docs/tracking.md) · [Tests](tests/test_tracking.py)
 
 ## What could you use SEA for?
 
@@ -261,6 +272,8 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `open_vision_status` | Local OWLv2 provider readiness |
 | `find_objects_by_text` | Text-conditioned object localization |
 | `view_text_matches` | Annotated text-search results |
+| `track_objects` | Tentative sampled object tracks and normalized movement |
+| `view_object_tracks` | Annotated sampled-frame contact sheet |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -303,6 +316,7 @@ See [installation and usage details](docs/installation.md).
 - [x] Screenshot OCR, pixel differences and template localization
 - [x] Optional local COCO object detector
 - [x] Optional text-conditioned OWLv2 detection
+- [x] Sampled COCO object tracking and visual contact sheets
 - [ ] One-click desktop extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
@@ -357,6 +371,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Object Tracking](docs/tracking.md) | Sampled tracks, ambiguity handling and image-space movement |
 | [Open Vision](docs/open-vision.md) | Optional text-conditioned detection |
 | [Vision AI](docs/vision-ai.md) | Optional pretrained object detection and setup |
 | [Screenshot intelligence](docs/images.md) | OCR, visual comparison and templates |

@@ -1,8 +1,16 @@
 # Changelog
 
+## 0.12.0
+
+- Sampled COCO object tracking with conservative adjacent-frame association and explicit gaps.
+- Normalized center displacement and sampled path length; annotated contact sheets.
+- Load one optional CPU detector per tracking invocation instead of per sample.
+- Five core tracking tests, a real pretrained video smoke test and MCP integration coverage.
+- Updated official skill, workflow catalog and documentation.
+
 ## 0.11.0
 
-- Fix Open Vision preprocessing by declaring SciPy, checking its availability and selecting the slow processor explicitly. Model inference CI must still pass to verify the fix.
+- Fix Open Vision preprocessing by declaring SciPy, checking its availability and selecting the slow processor explicitly. The subsequent pretrained Open Vision and cross-platform checks passed.
 
 - Optional local OWLv2 text-conditioned object localization, annotated matches and readiness checks.
 - Bounded text queries, per-label overlap suppression, weight digest and explicit limitations.

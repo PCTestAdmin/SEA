@@ -10,7 +10,7 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
-from . import detector, openvision
+from . import detector, openvision, tracking
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Treat object predictions as uncertain model output. Media results may be visible to the AI provider.')
 
@@ -164,6 +164,17 @@ def view_text_matches(path: str, queries: list[str], time_s: float = 0, threshol
     """Return an annotated visual search image. This reruns local OWLv2 inference and sends the image to the MCP host."""
     report,rgb=openvision.search(resolve_media(path,allow_image=True),queries,time_s,threshold,limit)
     return Image(data=openvision.overlay(report,rgb),format='png')
+
+@mcp.tool()
+def track_objects(path: str, start_s: float = 0, duration_s: float = 10, samples: int = 6, threshold: float = .5, min_iou: float = .3, labels: list[str] | None = None, limit: int = 12) -> dict:
+    """Associate optional local COCO detections across 2–12 sampled video frames (0.25–60 s). Reports tentative tracks, gaps and normalized image-space movement. Not identity recognition or continuous tracking."""
+    return tracking.track(resolve_media(path),start_s,duration_s,samples,threshold,min_iou,labels,limit)[0]
+
+@mcp.tool()
+def view_object_tracks(path: str, start_s: float = 0, duration_s: float = 10, samples: int = 6, threshold: float = .5, min_iou: float = .3, labels: list[str] | None = None, limit: int = 12) -> Image:
+    """Rerun a bounded tracking analysis and return an annotated contact sheet. Track IDs are local to this call; image content goes to the host."""
+    report,frames=tracking.track(resolve_media(path),start_s,duration_s,samples,threshold,min_iou,labels,limit,keep_frames=True)
+    return Image(data=tracking.contact_sheet(report,frames),format='png')
 
 def main():
     mcp.run(transport='stdio')

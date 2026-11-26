@@ -26,7 +26,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception','read_image_text','compare_images','view_image_difference','find_image_template','guided_workflows','vision_status','detect_objects','view_detections','open_vision_status','find_objects_by_text','view_text_matches'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception','read_image_text','compare_images','view_image_difference','find_image_template','guided_workflows','vision_status','detect_objects','view_detections','open_vision_status','find_objects_by_text','view_text_matches','track_objects','view_object_tracks'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -99,4 +99,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     data=result.structuredContent or json.loads(result.content[0].text)
                     self.assertFalse(data['directory_configured'])
                     result=await session.call_tool('find_objects_by_text',{'path':str(still),'queries':['cat']})
+                    self.assertTrue(result.isError)
+
+                    result=await session.call_tool('track_objects',{'path':str(wav),'duration_s':1})
                     self.assertTrue(result.isError)

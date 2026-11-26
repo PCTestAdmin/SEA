@@ -87,8 +87,8 @@ def normalize_predictions(prediction: dict, categories: list[str], width: int, h
             'truncated':len(rows)>limit,'label_counts':dict(Counter(r['label'] for r in selected))}
 
 
-def infer(rgb: np.ndarray, threshold: float, limit: int) -> dict:
-    validate_options(threshold,limit)
+def load_detector():
+    """Load one CPU model for a single analysis or bounded multi-frame call."""
     raw,digest=checkpoint()
     try:
         import torch
@@ -97,23 +97,35 @@ def infer(rgb: np.ndarray, threshold: float, limit: int) -> dict:
     except (ImportError,RuntimeError,OSError) as e:
         raise RuntimeError('Install a compatible torch/torchvision pair in the SEA environment; see docs/vision-ai.md.') from e
     weights=SSDLite320_MobileNet_V3_Large_Weights.COCO_V1
-    # No implicit downloads: both sets of weights explicitly disabled.
     model=ssdlite320_mobilenet_v3_large(weights=None,weights_backbone=None)
     state=torch.load(io.BytesIO(raw),map_location='cpu',weights_only=True)
     model.load_state_dict(state,strict=True)
     model.eval()
-    sample=weights.transforms()(Image.fromarray(rgb))
-    with torch.inference_mode():
-        prediction=model([sample])[0]
+    del raw,state
+    categories=weights.meta['categories']
+    transform=weights.transforms()
+    provenance={'model':MODEL,'weights_sha256':digest,'torch_version':str(torch.__version__),'device':'cpu'}
+
+    def predict(rgb: np.ndarray, threshold: float, limit: int) -> dict:
+        validate_options(threshold,limit)
+        sample=transform(Image.fromarray(rgb))
+        with torch.inference_mode():
+            prediction=model([sample])[0]
+        h,w=rgb.shape[:2]
+        return normalize_predictions({k:v.cpu().tolist() for k,v in prediction.items()},
+                                     categories,w,h,threshold,limit)
+    return predict,provenance,categories
+
+
+def infer(rgb: np.ndarray, threshold: float, limit: int) -> dict:
+    validate_options(threshold,limit)
+    predict,provenance,_=load_detector()
     h,w=rgb.shape[:2]
-    report=normalize_predictions({k:v.cpu().tolist() for k,v in prediction.items()},
-                                 weights.meta['categories'],w,h,threshold,limit)
-    return {'model':MODEL,'weights_sha256':digest,'torch_version':str(torch.__version__),
-            'sample_size_px':[w,h],'threshold':threshold,'device':'cpu',**report,
+    return {**provenance,'sample_size_px':[w,h],'threshold':threshold,**predict(rgb,threshold,limit),
             'limitations':['Model predictions, not verified facts or calibrated probabilities.',
                            'Fixed COCO classes; unknown or small objects may be missed.',
                            'Counts describe returned boxes, not guaranteed object counts.',
-                           'No face identity, individual recognition, physical depth or tracking.',
+                           'No face identity, individual recognition or physical depth.',
                            'Coordinates are normalized coded-image coordinates; no EXIF autorotation.']}
 
 
