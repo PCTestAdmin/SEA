@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.0
+
+- Opt-in content-addressed JSON measurement reports with source SHA-256 and analyzer provenance.
+- Five evidence tools, bounded local storage and explicit save/delete confirmation.
+- Five unit tests and MCP integration coverage. Hash verification is not authentication.
+
 ## 0.12.0
 
 - Sampled COCO object tracking with conservative adjacent-frame association and explicit gaps.

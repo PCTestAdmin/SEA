@@ -1,5 +1,6 @@
 """Read-only workflow discovery, for clients without installed skills."""
 WORKFLOWS={
+    'capture-evidence': ['capture_evidence','recall_evidence','verify_evidence'],
     'track-objects': ['vision_status','track_objects','view_object_tracks'],
     'find-objects-by-text': ['open_vision_status','find_objects_by_text','view_text_matches'],
     'detect-objects': ['vision_status','detect_objects','view_detections'],

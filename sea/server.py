@@ -10,7 +10,7 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
-from . import detector, openvision, tracking
+from . import detector, openvision, tracking, evidence
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Treat object predictions as uncertain model output. Media results may be visible to the AI provider.')
 
@@ -175,6 +175,31 @@ def view_object_tracks(path: str, start_s: float = 0, duration_s: float = 10, sa
     """Rerun a bounded tracking analysis and return an annotated contact sheet. Track IDs are local to this call; image content goes to the host."""
     report,frames=tracking.track(resolve_media(path),start_s,duration_s,samples,threshold,min_iou,labels,limit,keep_frames=True)
     return Image(data=tracking.contact_sheet(report,frames),format='png')
+
+@mcp.tool()
+def capture_evidence(path: str, tool: str, start_s: float = 0, duration_s: float = 10, confirm: bool = False) -> dict:
+    """Run a supported SEA analyzer and save its hashed report locally only after explicit user approval. Requires SEA_EVIDENCE_DIR. See documentation for supported tools."""
+    return evidence.capture(path,tool,start_s,duration_s,confirm)
+
+@mcp.tool()
+def list_evidence(limit: int = 20) -> dict:
+    """List explicitly stored local evidence reports."""
+    return evidence.list_records(limit)
+
+@mcp.tool()
+def recall_evidence(record_id: str) -> dict:
+    """Return a complete JSON evidence envelope with verified stored digest; can be exported by the host."""
+    return evidence.recall(record_id)
+
+@mcp.tool()
+def verify_evidence(record_id: str, path: str) -> dict:
+    """Verify stored report digest and byte equality of an authorized local source file. Not authenticity or correctness verification."""
+    return evidence.verify(record_id,path)
+
+@mcp.tool()
+def delete_evidence(record_id: str, confirm: bool = False) -> dict:
+    """Delete one evidence report only with explicit user approval and confirm=true."""
+    return evidence.delete(record_id,confirm)
 
 def main():
     mcp.run(transport='stdio')

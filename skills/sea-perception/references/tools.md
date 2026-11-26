@@ -2,6 +2,7 @@
 
 | Goal | First tool | Follow-up |
 | --- | --- | --- |
+| Preserve a measurement | capture_evidence (explicit approval) | recall_evidence, verify_evidence |
 | Follow objects in a video | vision_status, track_objects | view_object_tracks |
 | Find objects by text | open_vision_status, find_objects_by_text | view_text_matches |
 | Locate known object classes | vision_status, detect_objects | view_detections |
