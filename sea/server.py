@@ -13,7 +13,7 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
-from . import detector, openvision, tracking, evidence, motion, displacement, video_understanding, video_perception, temporal
+from . import detector, openvision, tracking, evidence, motion, displacement, video_understanding, video_perception, temporal, visual_search
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. SEA is a sensory tool, not a reasoning model. Prefer model-free video perception; the host interprets observations. Treat optional model predictions as uncertain. Media results may be visible to the AI provider.')
 
@@ -314,8 +314,29 @@ def search_video_observations(path: str, query: str = '', limit: int = 30, after
 
 @mcp.tool()
 def delete_video_index(source_revision: str, confirm: bool = False) -> dict:
-    """Delete an index and all its associated notes only after explicit user approval; never delete source media."""
+    """Delete an index, associated visual descriptors and notes only after explicit user approval; never delete source media."""
     return temporal.delete(source_revision,confirm)
+
+@mcp.tool()
+def build_visual_index(path: str, frame_stride: int = 30, confirm: bool = False) -> dict:
+    """With explicit approval, build reusable classical visual fingerprints for up to 12000 sampled decoded frames. Requires a temporal index; no models."""
+    return visual_search.build(resolve_media(path),frame_stride,confirm)
+
+@mcp.tool()
+def search_visual_index(path: str, reference_image: str | None = None, reference_frame: int | None = None, threshold: float = .9, limit: int = 30) -> dict:
+    """Find visually similar indexed whole frames using a local PNG/JPEG or sampled reference ordinal. No semantic or personal identification; verify actual frames."""
+    ref=resolve_media(reference_image,allow_image=True) if reference_image is not None else None
+    return visual_search.search(resolve_media(path),ref,reference_frame,threshold,limit)
+
+@mcp.tool()
+def search_video_template(path: str, reference_image: str, cursor: int = 0, sample_fps: int = 2, threshold: float = .9, expected_revision: str | None = None) -> dict:
+    """Search one chronological four-second page for a same-scale visual template, returning approximate times and boxes. Follow next_cursor; not semantic detection."""
+    return visual_search.template_page(resolve_media(path),resolve_media(reference_image,allow_image=True),cursor,sample_fps,threshold,expected_revision)
+
+@mcp.tool()
+def delete_visual_index(path: str, confirm: bool = False) -> dict:
+    """Delete visual fingerprints only with explicit approval, preserving temporal index and notes."""
+    return visual_search.delete(resolve_media(path),confirm)
 
 def main():
     mcp.run(transport='stdio')

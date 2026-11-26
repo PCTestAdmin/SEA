@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.18.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.19.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -244,11 +244,17 @@ what happened and how events relate, citing the times and evidence.
 
 [Universal Video Perception](docs/video-perception.md) · [Optional legacy model providers](docs/video-understanding.md)
 
-### New in v0.18 — Temporal Index
+### Temporal Index
 
 With explicit permission, build a reusable local index of decoded frame ordinals, stream timestamps and keyframe flags. Locate frames by time without decoding the video again for metadata, and save searchable host-authored observations tied to frame ranges. No AI model, raw frame archive or embedding service required.
 
 [Temporal Index guide](docs/temporal-index.md)
+
+### New in v0.19 — Visual Search
+
+Find recurring visual appearances in a video without an additional AI model. Build an opt-in index of classical color and luminance fingerprints, search by a reference image or indexed frame, then inspect the matching source frames. Search for a specific same-scale textured image patch using paginated template matching.
+
+[Visual Search guide](docs/visual-search.md)
 
 ## What could you use SEA for?
 
@@ -339,7 +345,11 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `locate_video_frame` | Look up nearest timestamp or exact indexed ordinal |
 | `remember_video_observation` | Save host-authored frame-range note with approval |
 | `search_video_observations` | Search saved notes by literal text |
-| `delete_video_index` | Delete index and notes with approval |
+| `delete_video_index` | Delete index, visual descriptors and notes with approval |
+| `build_visual_index` | Build reusable sampled visual fingerprints with approval |
+| `search_visual_index` | Find similar whole-frame appearances by example |
+| `search_video_template` | Page through video for a same-scale image patch |
+| `delete_visual_index` | Delete visual fingerprints, retaining temporal metadata |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -442,6 +452,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Visual Search](docs/visual-search.md) | Model-free appearance search and template localization |
 | [Temporal Index](docs/temporal-index.md) | Persistent frame timestamps and searchable observations |
 | [Universal Video Perception](docs/video-perception.md) | Model-free timeline, exact frame ordinals, audio and visual evidence |
 | [Optional model providers](docs/video-understanding.md) | Legacy opt-in descriptions and speech |

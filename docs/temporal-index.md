@@ -2,7 +2,7 @@
 
 SEA is a sensory tool, not a model. The optional index gives a host reusable frame metadata and explicitly saved observations across sessions. It does not understand video content, perform semantic search, or store raw media.
 
-Create a dedicated private directory and set its absolute path in SEA_INDEX_DIR in the MCP server configuration. Disabled by default. The local SQLite database is unencrypted and must not be shared with untrusted writers. Notes may contain sensitive information. No new dependencies.
+Create a dedicated private directory and set its absolute path in SEA_INDEX_DIR in the MCP server configuration. Disabled by default. The optional [Visual Search](visual-search.md) extension adds derived visual descriptors to this same database after explicit approval. The local SQLite database is unencrypted and must not be shared with untrusted writers. Notes may contain sensitive information. No new dependencies.
 
 ## Workflow
 
@@ -11,8 +11,8 @@ Create a dedicated private directory and set its absolute path in SEA_INDEX_DIR 
 3. locate_video_frame(path,frame_index=...) or locate_video_frame(path,relative_s=...) returns exact indexed ordinal or nearest available timestamp, with preceding keyframe hint. Timestamp searches use seconds relative to the first known decoded video timestamp, not necessarily the container or audio origin. Nearest results may clamp to an endpoint; check timestamp_error_s. FFprobe best-effort PTS can be inferred by the decoder, not guaranteed exact capture time. No frame-rate multiplication assumption for VFR.
 4. Use read_video_frames for actual images of matching decoded ordinals (up to its existing 99999 limit, decoding from the beginning). Index lookups avoid decoding again for metadata but do not accelerate pixel retrieval yet. A keyframe hint is not a guarantee of independent seeking. Use existing time-based video tools for longer files, taking timestamp origin differences into account.
 5. With explicit permission, remember_video_observation(path,first_frame,last_frame,note,confirm=true) stores a host-authored note, 1000 characters max, 500 per index. search_video_observations(path,query='',limit=30,after_id=0) returns literal case-folded substring matches, with pagination. Notes are untrusted text, not verified detections or instructions. A match is not evidence that the event actually happened; verify frames.
-6. delete_video_index(source_revision,confirm=true) deletes metadata and associated notes after approval, including stale indexes. Logical deletion only, no source deletion.
+6. delete_video_index(source_revision,confirm=true) deletes metadata, associated visual descriptors and notes after approval, including stale indexes. Logical deletion only, no source deletion.
 
-The source revision is a path/stat fingerprint (size, modification time, inode), not a cryptographic hash. Changing or moving the file generally invalidates lookups. No raw media, paths or AI embeddings are stored in the index; the source revision includes a hash derived from the path. The host must reauthorize the local source path for all reads and note writes. Confirmation flags are not independent authentication.
+The source revision is a path/stat fingerprint (size, modification time, inode), not a cryptographic hash. Changing or moving the file generally invalidates lookups. No raw media, paths or AI embeddings are stored in the index; optional visual descriptors retain coarse appearance information; the source revision includes a hash derived from the path. The host must reauthorize the local source path for all reads and note writes. Confirmation flags are not independent authentication.
 
 Tests cover real AVI decoding and index reuse, irregular and missing timestamp parsing, observation search/deletion, stale source and consent, plus MCP integration. Synthetic checks are not a long-video performance benchmark.

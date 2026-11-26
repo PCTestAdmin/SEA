@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.19.0
+
+- Model-free reusable visual fingerprints over sampled decoded frame ordinals, search by local image or indexed frame.
+- Paginated same-scale template matching with approximate times and normalized sample coordinates.
+- Explicit opt-in storage, source revision checks, selective descriptor deletion and cascading temporal index deletion.
+- Four core tests and MCP integration coverage. No new dependencies.
+- Previous autoRIFT small-grid hotfix passed its native smoke test.
+
 ## 0.18.0
 
 - Fix autoRIFT small-grid configuration: use coarse search stride 1 rather than the large-scene default of 4, preserving upstream consistency filtering and the original native accuracy assertions. Add adapter configuration regression coverage.

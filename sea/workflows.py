@@ -1,5 +1,6 @@
 """Read-only workflow discovery, for clients without installed skills."""
 WORKFLOWS={
+    'search-video-appearance': ['build_video_index','build_visual_index','search_visual_index','read_video_frames','search_video_template'],
     'revisit-video-evidence': ['build_video_index','locate_video_frame','read_video_frames','remember_video_observation','search_video_observations'],
     'understand-full-video': ['plan_video_analysis','scan_video_timeline','view_video_segment','read_video_frames','view_video_frame_region','compare_video_frames','listen_video_segment'],
     'measure-displacement': ['autorift_status','measure_displacement','view_displacement_field'],

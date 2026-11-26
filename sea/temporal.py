@@ -111,7 +111,7 @@ def metadata(row):
             'timestamp_basis':'FFprobe best_effort_timestamp in stream ticks; relative_s is relative to first known video PTS, not container/audio time.',
             'limitations':['Decoded presentation order; timestamps are decoder-reported and may be inferred.',
                            'Duplicate or missing PTS are preserved. Source revision is a metadata fingerprint, not a content hash.',
-                           'Index stores metadata only, not video frames or semantic interpretations.']}
+                           'Temporal records store metadata only; optional visual descriptors are separate, not raw frames or semantic interpretations.']}
 
 
 def build(p,confirm=False):
@@ -250,4 +250,4 @@ def delete(revision,confirm=False):
     with database(write=True) as db:
         if db.execute('DELETE FROM videos WHERE revision=?',(revision,)).rowcount!=1:
             raise ValueError('Index not found.')
-    return {'source_revision':revision,'status':'deleted','note':'Associated observations deleted logically; source media unchanged.'}
+    return {'source_revision':revision,'status':'deleted','note':'Associated observations and visual descriptors deleted logically; source media unchanged.'}
