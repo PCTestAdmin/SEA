@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -24,9 +25,12 @@ class BenchmarkTests(unittest.TestCase):
         cls.root=Path(tmp.name).resolve()
         mp4=cls.root/'demo.mp4'
         proc=subprocess.run([sys.executable,str(ROOT/'examples'/'make_mp4_demo.py'),str(mp4)],
-                            stdin=subprocess.DEVNULL,capture_output=True,text=True,timeout=105)
+                            stdin=subprocess.DEVNULL,capture_output=True,text=True,timeout=15)
         if proc.returncode:
             raise RuntimeError('MP4 fixture generation failed: '+proc.stderr[-5000:])
+        actual=hashlib.sha256(mp4.read_bytes()).hexdigest()
+        if actual != '9fc63488526f47f6fa1a48c91bdaaa712ed8eebf5504b3a0de4bf2641c456284':
+            raise RuntimeError('Unexpected frozen MP4 bytes: '+actual)
         cls.spec=b.load(ROOT/'benchmarks'/'smoke_spec.json')
         cls.suite,cls.key=b.prepare(cls.spec,cls.root)
         cls.protocol={'pair_id':'unit-test','model':'fake-test-model','host':'test-host','settings':'fixed',

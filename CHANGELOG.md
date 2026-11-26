@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.23.2
+
+- Freeze a small, SHA-256-verified MPEG-4/AAC smoke fixture instead of encoding it on every CI runner. The file contains exactly six seconds of video and 48 kHz mono audio; tests still decode real MP4 and require both scene changes, complete sampled audio/video coverage and cross-modal transitions.
+- Keep the previous strict assertions and add a fixture integrity check. FFmpeg 9.1 on Windows previously timed out during fixture encoding; FFmpeg 9.0.2 on macOS returned 32 ms less audio per segment from the previous fixture. The new fixture was independently decoded with FFmpeg 7.1.5; the precise FFmpeg 9 behavior and cross-platform CI outcome remain to be verified.
+
 ## 0.23.1
 
 - Address the v0.23.0 Windows MP4 fixture encoding timeout and macOS missing scene-candidate failure by replacing AVI transcoding with bounded direct RGB/WAV encoding (MPEG-4/AAC), explicit stream mapping, single-threaded encoders, intra frames and disabled stdin.
