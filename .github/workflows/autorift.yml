@@ -1,0 +1,36 @@
+name: NASA JPL autoRIFT smoke test
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'sea/displacement.py'
+      - 'tests/test_displacement.py'
+      - 'pyproject.toml'
+      - '.github/workflows/autorift.yml'
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: sea-autorift
+          create-args: >-
+            python=3.11
+            autorift=2.1.1
+            pip
+            -c conda-forge
+          cache-environment: true
+      - run: python -m pip install .
+      - run: python -m unittest discover -s tests -p test_displacement.py -v
+        env:
+          SEA_TEST_AUTORIFT: '1'
+          OMP_NUM_THREADS: '1'
+          OPENBLAS_NUM_THREADS: '1'

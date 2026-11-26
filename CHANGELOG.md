@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.15.0
+
+- Optional native NASA JPL autoRIFT 2.1.1 integration in a bounded subprocess.
+- Three MCP tools for discovery, grid displacement and vector visualization.
+- Direct/interpolated/missing masks, fixed chip size and bounded image sampling.
+- Four core tests and a separate native-provider synthetic shift test. No upstream code bundled.
+
 ## 0.14.0
 
 - Fix Windows evidence test cleanup: explicitly close SQLite connections after test transactions.

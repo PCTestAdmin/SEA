@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.14.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.15.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -215,7 +215,7 @@ Explicitly capture a supported measurement as a content-addressed JSON report wi
 
 [Evidence guide](docs/evidence.md)
 
-### New in v0.14 — Micro-Motion Intelligence
+### Micro-Motion Intelligence
 
 Measure small image translations in a selected mechanical region, estimate dominant vibration frequency and inspect a displacement waveform. Optional reference-region subtraction compensates shared translation. No extra AI model needed.
 
@@ -224,6 +224,12 @@ python examples/make_motion_demo.py /absolute/path/to/media/motion.avi
 ```
 
 Ask your agent to measure the region [0.1,0.1,0.9,0.9] at 24 fps for 4 seconds. The synthetic fixture has a known 3 Hz, 0.4 pixel oscillation. These are fixture inputs; see CI for validation. [Motion guide](docs/micro-motion.md)
+
+### New in v0.15 — NASA JPL autoRIFT integration
+
+Use the optional official autoRIFT 2.1.1 package to estimate local displacement between aligned image pairs. SEA reports raw upstream vectors and distinguishes matched, interpolated and missing points. It does not claim NASA endorsement or metric measurement. Native provider verification is a separate CI job.
+
+[Installation and limitations](docs/displacement.md) · [Upstream NASA JPL project](https://github.com/nasa-jpl/autoRIFT)
 
 ## What could you use SEA for?
 
@@ -297,6 +303,9 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `delete_evidence` | Explicitly delete one report |
 | `measure_micro_motion` | Small image displacement and dominant vibration frequency estimates |
 | `view_motion_waveform` | Plot measured displacement with invalid-sample gaps |
+| `autorift_status` | Optional pinned autoRIFT provider discovery |
+| `measure_displacement` | Native autoRIFT grid vectors with missing/interpolated masks |
+| `view_displacement_field` | Visualize raw displacement field |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -342,6 +351,7 @@ See [installation and usage details](docs/installation.md).
 - [x] Sampled COCO object tracking and visual contact sheets
 - [x] Opt-in content-addressed evidence reports for selected analyzers
 - [x] Experimental small-motion measurement and waveform
+- [x] Optional autoRIFT adapter (native verification tracked in CI)
 - [ ] One-click desktop extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
@@ -396,6 +406,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Precision Displacement](docs/displacement.md) | Optional NASA JPL autoRIFT provider |
 | [Micro-Motion](docs/micro-motion.md) | Mechanical motion measurement and reproducible fixture |
 | [Evidence system](docs/evidence.md) | Content-addressed reports and source verification |
 | [Object Tracking](docs/tracking.md) | Sampled tracks, ambiguity handling and image-space movement |

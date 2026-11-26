@@ -1,5 +1,6 @@
 """Read-only workflow discovery, for clients without installed skills."""
 WORKFLOWS={
+    'measure-displacement': ['autorift_status','measure_displacement','view_displacement_field'],
     'measure-micro-motion': ['inspect_media','measure_micro_motion','view_motion_waveform'],
     'capture-evidence': ['capture_evidence','recall_evidence','verify_evidence'],
     'track-objects': ['vision_status','track_objects','view_object_tracks'],

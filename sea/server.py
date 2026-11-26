@@ -10,7 +10,7 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
-from . import detector, openvision, tracking, evidence, motion
+from . import detector, openvision, tracking, evidence, motion, displacement
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Treat object predictions as uncertain model output. Media results may be visible to the AI provider.')
 
@@ -211,6 +211,22 @@ def view_motion_waveform(path: str, box: list[float], start_s: float = 0, durati
     """Rerun small-motion analysis and return a PNG chart of measured image displacement. Invalid samples leave gaps."""
     report=motion.analyze_motion(resolve_media(path),box,start_s,duration_s,sample_fps,reference_box)
     return Image(data=motion.waveform(report),format='png')
+
+@mcp.tool()
+def autorift_status() -> dict:
+    """Discover optional pinned NASA JPL autoRIFT provider, without running native analysis or installing anything."""
+    return displacement.status()
+
+@mcp.tool()
+def measure_displacement(path_a: str, path_b: str, search_radius: int = 12) -> dict:
+    """Run optional NASA JPL autoRIFT on two authorized equal-size PNG/JPEG images. Return raw upstream displacement vectors, direct/interpolated/missing points in sampled pixels. Not metric motion or georeferencing."""
+    return displacement.measure(resolve_media(path_a,allow_image=True),resolve_media(path_b,allow_image=True),search_radius)[0]
+
+@mcp.tool()
+def view_displacement_field(path_a: str, path_b: str, search_radius: int = 12) -> Image:
+    """Rerun autoRIFT and visualize raw displacement vectors at grid locations. Mark direct, interpolated and missing points separately."""
+    report,rgb=displacement.measure(resolve_media(path_a,allow_image=True),resolve_media(path_b,allow_image=True),search_radius)
+    return Image(data=displacement.draw_vectors(report,rgb),format='png')
 
 def main():
     mcp.run(transport='stdio')

@@ -62,5 +62,5 @@ class SetupTests(unittest.TestCase):
             media_root(str(self.root / 'absent'))
 
     def test_doctor(self):
-        self.assertEqual(doctor(self.media)['version'], '0.14.0')
+        self.assertEqual(doctor(self.media)['version'], '0.15.0')
         self.assertTrue(doctor(self.media)['checks']['media_root'])

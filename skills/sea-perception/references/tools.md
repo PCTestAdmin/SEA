@@ -2,6 +2,7 @@
 
 | Goal | First tool | Follow-up |
 | --- | --- | --- |
+| Measure image-pair displacement | autorift_status, measure_displacement | view_displacement_field |
 | Measure small mechanical image motion | inspect_media, measure_micro_motion | view_motion_waveform |
 | Preserve a measurement | capture_evidence (explicit approval) | recall_evidence, verify_evidence |
 | Follow objects in a video | vision_status, track_objects | view_object_tracks |
