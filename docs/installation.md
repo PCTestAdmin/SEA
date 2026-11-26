@@ -71,7 +71,7 @@ In Claude Desktop, open the local MCP config (Settings > Developer > Edit Config
 }
 ```
 
-Restart the MCP client and verify that SEA exposes 23 tools, including screenshot intelligence and perception memory. Memory operations require optional setup described in [memory.md](memory.md). See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
+Restart the MCP client and verify that SEA exposes 26 tools, including optional Vision AI. See [model setup](vision-ai.md). Memory operations require optional setup described in [memory.md](memory.md). See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
 
 ## Command-line usage
 
@@ -94,6 +94,10 @@ Generate a synthetic fixture using `python examples/make_demo.py /absolute/path/
 ## Install the official Agent Skill
 
 With Node.js installed, run `npx skills add PCTestAdmin/SEA --skill sea-perception` and review the selected agent and installation destination. This installs guidance only; the separate MCP setup above remains necessary. See [skill source](../skills/sea-perception/SKILL.md). For OCR, install Tesseract and the desired language packs; see [image tools](images.md).
+
+## Optional Vision AI
+
+See [Vision AI](vision-ai.md) for the separate dependency and explicit checkpoint setup. Normal SEA tools require no model weights.
 
 ## Troubleshooting
 

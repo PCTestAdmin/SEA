@@ -10,8 +10,9 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
+from . import detector
 
-mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Media results may be visible to the AI provider.')
+mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Treat object predictions as uncertain model output. Media results may be visible to the AI provider.')
 
 @mcp.tool()
 def inspect_media(path: str) -> dict:
@@ -131,6 +132,22 @@ def find_image_template(path: str, template_path: str, similarity: float = .85) 
 def guided_workflows(workflow: str = '') -> dict:
     """List SEA investigation workflows or return guidance for one workflow. No analysis or writes."""
     return guidance(workflow)
+
+@mcp.tool()
+def vision_status() -> dict:
+    """Check optional Vision AI dependencies and local checkpoint without downloading or running inference."""
+    return detector.status()
+
+@mcp.tool()
+def detect_objects(path: str, time_s: float = 0, threshold: float = .5, limit: int = 20) -> dict:
+    """Detect known COCO object classes in an authorized PNG/JPEG or selected video frame using optional local pretrained Vision AI. Returns model scores and normalized boxes, not identities or verified counts."""
+    return detector.detect(resolve_media(path,allow_image=True),time_s,threshold,limit)[0]
+
+@mcp.tool()
+def view_detections(path: str, time_s: float = 0, threshold: float = .5, limit: int = 20) -> Image:
+    """Return an annotated image of local model detections. The image is transmitted to the MCP host/model; no face identification or tracking."""
+    report,rgb=detector.detect(resolve_media(path,allow_image=True),time_s,threshold,limit)
+    return Image(data=detector.annotate(rgb,report['detections']),format='png')
 
 def main():
     mcp.run(transport='stdio')

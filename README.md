@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.9.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.10.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -26,7 +26,7 @@ Most AI assistants can reason about a description. But descriptions alone cannot
 **SEA gives your agent access to the measurements themselves.** It is a local Model Context Protocol (MCP) extension, not another chatbot. Connect it to your existing assistant, select a recording, and ask a question.
 
 > [!NOTE]
-> SEA is an early open-source prototype. Audio, video, image-space and recorded sensor measurements are implemented; live sensors, one-click desktop packages and semantic sound recognition are not yet available. Check the [live test results](https://github.com/PCTestAdmin/SEA/actions/workflows/test.yml) for platform verification.
+> SEA is an early open-source prototype. Audio, video, image-space and recorded sensor measurements plus optional pretrained object detection are implemented; live sensors, one-click desktop packages and semantic sound recognition are not yet available. Check the [live test results](https://github.com/PCTestAdmin/SEA/actions/workflows/test.yml) for platform verification.
 
 ## Quick start
 
@@ -164,7 +164,7 @@ the measured differences without guessing the cause.
 
 [Enable and use perception memory](docs/memory.md)
 
-### New in v0.9 — screenshot intelligence and agent skill
+### Screenshot intelligence and agent skill
 
 Read visible text with optional local Tesseract, locate changed screenshot regions, visualize pixel differences, or locate a known same-scale icon using template matching. These are not semantic object labels.
 
@@ -175,6 +175,17 @@ npx skills add PCTestAdmin/SEA --skill sea-perception
 ```
 
 Requires Node.js for the skill installer. The skill does not install the MCP server; follow Quick start first. [Skill source](skills/sea-perception/SKILL.md) · [Image guide](docs/images.md)
+
+### New in v0.10 — Vision AI
+
+Optional local pretrained object detection for common COCO classes in photos and individual video frames. Receive labeled bounding boxes, model scores, model provenance and a visual overlay. No model is downloaded automatically.
+
+```text
+Detect objects in my image with SEA, show the marked regions,
+and explain which predictions need human verification.
+```
+
+[Enable Vision AI](docs/vision-ai.md) · [Detector tests](tests/test_detector.py)
 
 ## What could you use SEA for?
 
@@ -233,6 +244,9 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `view_image_difference` | PNG overlay highlighting changed pixels |
 | `find_image_template` | Single-scale grayscale template localization |
 | `guided_workflows` | Read-only agent workflow discovery |
+| `vision_status` | Optional detector readiness and checkpoint provenance |
+| `detect_objects` | COCO object predictions, scores and bounding boxes |
+| `view_detections` | Annotated image of model predictions |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -273,6 +287,7 @@ See [installation and usage details](docs/installation.md).
 - [ ] Verified client integration and cross-platform installation
 - [x] Official Agent Skill and guided workflow discovery
 - [x] Screenshot OCR, pixel differences and template localization
+- [x] Optional local COCO object detector
 - [ ] One-click desktop extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
@@ -327,6 +342,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Vision AI](docs/vision-ai.md) | Optional pretrained object detection and setup |
 | [Screenshot intelligence](docs/images.md) | OCR, visual comparison and templates |
 | [Agent Skill](skills/sea-perception/SKILL.md) | Agent instructions and workflows |
 | [Perception memory](docs/memory.md) | Opt-in SQLite baseline history and comparison |

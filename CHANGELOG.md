@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0
+
+- Optional offline Torchvision SSDLite COCO detector with explicit local checkpoint and verified official hash prefix.
+- Three MCP tools: readiness, object predictions and annotated detections.
+- Detector provenance, normalized bounding boxes and bounded outputs.
+- Unit tests, expanded MCP checks and separate pretrained inference CI lane.
+- Updated official skill and workflow discovery. No automatic model downloads.
+
 ## 0.9.0
 
 - Official free Agent Skill and read-only guided workflows.

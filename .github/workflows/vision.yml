@@ -1,0 +1,25 @@
+name: Vision AI smoke test
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  pretrained:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install ".[vision]"
+      - name: Fetch explicit public test inputs
+        run: |
+          curl --fail --location --retry 2 --max-time 90 https://download.pytorch.org/models/ssdlite320_mobilenet_v3_large_coco-a79551df.pth -o "$RUNNER_TEMP/sea-weights.pth"
+          curl --fail --location --retry 2 --max-time 60 https://images.cocodataset.org/val2017/000000039769.jpg -o "$RUNNER_TEMP/cats.jpg"
+          echo "SEA_VISION_WEIGHTS=$RUNNER_TEMP/sea-weights.pth" >> "$GITHUB_ENV"
+          echo "SEA_VISION_TEST_IMAGE=$RUNNER_TEMP/cats.jpg" >> "$GITHUB_ENV"
+      - run: python -m unittest discover -s tests -p test_detector.py -v
+        env:
+          OMP_NUM_THREADS: '2'
+          MKL_NUM_THREADS: '2'

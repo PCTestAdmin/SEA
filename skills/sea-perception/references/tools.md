@@ -2,6 +2,7 @@
 
 | Goal | First tool | Follow-up |
 | --- | --- | --- |
+| Locate known object classes | vision_status, detect_objects | view_detections |
 | Read an error dialog | read_image_text | inspect_region |
 | Check a UI regression | compare_images | view_image_difference, OCR |
 | Locate a known icon | find_image_template | inspect_region |
