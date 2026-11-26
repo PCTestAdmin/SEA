@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.20.0
+
+- Shared target-aware model-free analysis for MCP and the SEA CLI, with portable digest-identified evidence and bounded inline projections.
+- Four native MCP prompts and shared guided workflow renderer.
+- Unified CLI analyze, inspect-evidence and guided-workflows commands; older entry points retained.
+- No new mandatory dependencies, model weights or persistent writes. Tests cover CLI/MCP parity, evidence integrity, paging and prompt discovery.
+- All v0.19 platform and optional native/model CI checks passed.
+
 ## 0.19.0
 
 - Model-free reusable visual fingerprints over sampled decoded frame ordinals, search by local image or indexed frame.

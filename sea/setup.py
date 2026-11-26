@@ -101,7 +101,7 @@ def register(path: Path, root: Path, *, apply=False, replace=False) -> dict:
 
 def doctor(root: Path | None = None) -> dict:
     checks = {name: shutil.which(name) is not None for name in ('ffmpeg', 'ffprobe')}
-    checks.update({name: importlib.util.find_spec(name) is not None for name in ('mcp', 'numpy')})
+    checks.update({name: importlib.util.find_spec(name) is not None for name in ('mcp', 'numpy', 'PIL')})
     if root is not None:
         checks['media_root'] = root.is_dir()
     return {'version': __version__, 'python': sys.executable, 'checks': checks,
@@ -120,8 +120,46 @@ def main(argv=None):
     setup.add_argument('--replace', action='store_true', help='Authorize replacing a different SEA entry')
     check = sub.add_parser('doctor', help='Check local prerequisites without modifying anything')
     check.add_argument('--media-root')
+    analyze = sub.add_parser('analyze', help='Analyze an authorized target; portable JSON evidence')
+    analyze.add_argument('path')
+    analyze.add_argument('--cursor',type=int,default=0)
+    analyze.add_argument('--segment-seconds',type=int,default=8)
+    analyze.add_argument('--page-size',type=int,default=2)
+    analyze.add_argument('--sample-fps',type=int,default=4)
+    analyze.add_argument('--start',type=float,default=0)
+    analyze.add_argument('--duration',type=float,default=10)
+    analyze.add_argument('--time-column')
+    analyze.add_argument('--channels',nargs='+')
+    analyze.add_argument('--expected-revision')
+    analyze.add_argument('--json',action='store_true',help='JSON output (also the default)')
+    views = sub.add_parser('inspect-evidence',help='Project a saved analyze_target JSON report')
+    views.add_argument('path',type=Path)
+    views.add_argument('--view',choices=['summary','page'],default='summary')
+    views.add_argument('--offset',type=int,default=0)
+    views.add_argument('--limit',type=int,default=20)
+    guides = sub.add_parser('guided-workflows',help='List workflows or render agent guidance')
+    guides.add_argument('workflow',nargs='?',default='')
     args = parser.parse_args(argv)
     try:
+        if args.action == 'analyze':
+            from .analysis import analyze_target
+            result=analyze_target(args.path,args.cursor,args.segment_seconds,args.page_size,args.sample_fps,
+                                  args.start,args.duration,args.time_column,args.channels,args.expected_revision)
+            print(json.dumps(result,indent=2,allow_nan=False))
+            return 0
+        if args.action == 'inspect-evidence':
+            from .analysis import inspect_view,MAX_EVIDENCE
+            with args.path.open('rb') as f:
+                raw=f.read(4*MAX_EVIDENCE+1)
+            if len(raw)>4*MAX_EVIDENCE:
+                raise ValueError('Report file exceeds CLI input limit.')
+            result=inspect_view(json.loads(raw.decode('utf-8-sig'),object_pairs_hook=unique_object),args.view,args.offset,args.limit)
+            print(json.dumps(result,indent=2,allow_nan=False))
+            return 0
+        if args.action == 'guided-workflows':
+            from .workflows import guidance
+            print(json.dumps(guidance(args.workflow),indent=2))
+            return 0
         root = media_root(args.media_root) if args.media_root else None
         if args.action == 'doctor':
             result = doctor(root)
@@ -133,7 +171,7 @@ def main(argv=None):
         if result.get('status') == 'configured':
             print('Restart your MCP client. Run sea doctor if tools do not appear.', file=sys.stderr)
         return 0 if result.get('ready_for_setup', True) else 1
-    except (OSError, ValueError) as exc:
+    except (OSError, ValueError, RuntimeError, KeyError, TypeError) as exc:
         print(f'SEA: {exc}', file=sys.stderr)
         return 2
 

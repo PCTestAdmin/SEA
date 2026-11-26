@@ -71,9 +71,11 @@ In Claude Desktop, open the local MCP config (Settings > Developer > Edit Config
 }
 ```
 
-Restart the MCP client and verify that SEA exposes 60 tools, including [Visual Search](visual-search.md), [Temporal Index](temporal-index.md), [Universal Video Perception](video-perception.md), [Video Understanding](video-understanding.md), [optional autoRIFT](displacement.md), [Micro-Motion](micro-motion.md), [evidence reports](evidence.md), [Object Tracking](tracking.md) and optional Vision AI and [Open Vision](open-vision.md). See [model setup](vision-ai.md). Memory operations require optional setup described in [memory.md](memory.md). See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
+Restart the MCP client and verify that SEA exposes 62 tools, including [Agent workflows](agent-workflows.md), [Visual Search](visual-search.md), [Temporal Index](temporal-index.md), [Universal Video Perception](video-perception.md), [Video Understanding](video-understanding.md), [optional autoRIFT](displacement.md), [Micro-Motion](micro-motion.md), [evidence reports](evidence.md), [Object Tracking](tracking.md) and optional Vision AI and [Open Vision](open-vision.md). See [model setup](vision-ai.md). Memory operations require optional setup described in [memory.md](memory.md). See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
 
 ## Command-line usage
+
+The unified CLI is now `sea analyze /absolute/path/to/media/demo.avi --json`. Set SEA_MEDIA_ROOTS as below first. Use `sea guided-workflows` to discover guidance, and `sea inspect-evidence` to project a saved report. See [CLI and evidence](agent-workflows.md). The older module command below remains supported.
 
 From the SEA source folder (or any directory after installation):
 

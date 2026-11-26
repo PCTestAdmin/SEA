@@ -2,6 +2,7 @@
 
 | Goal | First tool | Follow-up |
 | --- | --- | --- |
+| Start a model-free investigation | analyze_target | inspect_analysis_view, recommended follow-up tools |
 | Find repeated video appearances | build_video_index, build_visual_index (explicit approval) | search_visual_index, read_video_frames, search_video_template |
 | Revisit indexed video evidence | build_video_index (explicit approval), locate_video_frame | read_video_index, read_video_frames, remember_video_observation (explicit approval), search_video_observations |
 | Understand an entire video | plan_video_analysis, scan_video_timeline (all pages) | view_video_segment, read_video_frames, view_video_frame_region, compare_video_frames, listen_video_segment |

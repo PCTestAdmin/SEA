@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.19.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.20.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -250,11 +250,24 @@ With explicit permission, build a reusable local index of decoded frame ordinals
 
 [Temporal Index guide](docs/temporal-index.md)
 
-### New in v0.19 — Visual Search
+### Visual Search
 
 Find recurring visual appearances in a video without an additional AI model. Build an opt-in index of classical color and luminance fingerprints, search by a reference image or indexed frame, then inspect the matching source frames. Search for a specific same-scale textured image patch using paginated template matching.
 
 [Visual Search guide](docs/visual-search.md)
+
+### New in v0.20 — One investigation interface
+
+Start with `analyze_target` through MCP or `sea analyze` at the terminal. SEA selects the model-free workflow for the target and returns a portable evidence envelope, coverage and follow-up tools. Native MCP prompts and the same terminal guidance help agents investigate rather than guess.
+
+```bash
+# Set SEA_MEDIA_ROOTS to an existing authorized folder first.
+sea analyze /absolute/path/to/media/demo.avi --json > evidence.json
+sea inspect-evidence evidence.json --view summary
+sea guided-workflows understand-full-video
+```
+
+[Agent workflows, CLI and evidence contracts](docs/agent-workflows.md)
 
 ## What could you use SEA for?
 
@@ -350,6 +363,8 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `search_visual_index` | Find similar whole-frame appearances by example |
 | `search_video_template` | Page through video for a same-scale image patch |
 | `delete_visual_index` | Delete visual fingerprints, retaining temporal metadata |
+| `analyze_target` | Shared model-free target analysis and portable evidence |
+| `inspect_analysis_view` | Validate inline evidence and project summary or page |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -452,6 +467,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Agent workflows & CLI](docs/agent-workflows.md) | Shared analysis, portable evidence and MCP prompts |
 | [Visual Search](docs/visual-search.md) | Model-free appearance search and template localization |
 | [Temporal Index](docs/temporal-index.md) | Persistent frame timestamps and searchable observations |
 | [Universal Video Perception](docs/video-perception.md) | Model-free timeline, exact frame ordinals, audio and visual evidence |

@@ -12,8 +12,8 @@ from .survey import investigate_recording as survey_recording
 from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
-from .workflows import guidance
-from . import detector, openvision, tracking, evidence, motion, displacement, video_understanding, video_perception, temporal, visual_search
+from .workflows import guidance, render
+from . import detector, openvision, tracking, evidence, motion, displacement, video_understanding, video_perception, temporal, visual_search, analysis
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. SEA is a sensory tool, not a reasoning model. Prefer model-free video perception; the host interprets observations. Treat optional model predictions as uncertain. Media results may be visible to the AI provider.')
 
@@ -337,6 +337,36 @@ def search_video_template(path: str, reference_image: str, cursor: int = 0, samp
 def delete_visual_index(path: str, confirm: bool = False) -> dict:
     """Delete visual fingerprints only with explicit approval, preserving temporal index and notes."""
     return visual_search.delete(resolve_media(path),confirm)
+
+@mcp.tool()
+def analyze_target(path: str, cursor: int = 0, segment_seconds: int = 8, page_size: int = 2, sample_fps: int = 4, start_s: float = 0, duration_s: float = 10, time_column: str | None = None, channels: list[str] | None = None, expected_revision: str | None = None) -> dict:
+    """Start model-free analysis of authorized video, audio, still image or sensor CSV. Returns portable digest-identified evidence and follow-up tools. Video is paginated; no persistence."""
+    return analysis.analyze_target(path,cursor,segment_seconds,page_size,sample_fps,start_s,duration_s,time_column,channels,expected_revision)
+
+@mcp.tool()
+def inspect_analysis_view(evidence: dict, view: str = 'summary', offset: int = 0, limit: int = 20) -> dict:
+    """Validate the digest of a complete inline analyze_target envelope and return a bounded summary or collection page. No files, analysis or storage."""
+    return analysis.inspect_view(evidence,view,offset,limit)
+
+@mcp.prompt()
+def investigate_media_evidence() -> str:
+    """Start a model-free investigation with portable evidence."""
+    return render('analyze-target')
+
+@mcp.prompt()
+def understand_video() -> str:
+    """Investigate a full video using the host's own reasoning."""
+    return render('understand-full-video')
+
+@mcp.prompt()
+def revisit_video() -> str:
+    """Revisit previously indexed video evidence."""
+    return render('revisit-video-evidence')
+
+@mcp.prompt()
+def find_repeated_appearance() -> str:
+    """Search for repeated visual appearances without model inference."""
+    return render('search-video-appearance')
 
 def main():
     mcp.run(transport='stdio')
