@@ -32,7 +32,7 @@ def model_dir() -> Path:
 
 
 def status() -> dict:
-    deps={name:importlib.util.find_spec(name) is not None for name in ('torch','torchvision','transformers','safetensors')}
+    deps={name:importlib.util.find_spec(name) is not None for name in ('torch','torchvision','transformers','safetensors','scipy')}
     result={'recommended_model':MODEL,'dependencies_discoverable':deps,
             'directory_configured':bool(os.environ.get('SEA_OPEN_VISION_DIR','').strip()),
             'model_files_present':False,'ready_to_attempt':False,
@@ -106,7 +106,7 @@ def search(p: Path,queries: list[str],time_s: float=0,threshold: float=.2,limit:
         rgb,_=load_still(p,1024)
     else:
         rgb=load_image(p,time_s)
-    processor=Owlv2Processor.from_pretrained(str(directory),local_files_only=True)
+    processor=Owlv2Processor.from_pretrained(str(directory),local_files_only=True,use_fast=False)
     model=Owlv2ForObjectDetection.from_pretrained(str(directory),local_files_only=True,use_safetensors=True)
     model.eval()
     # OWLv2 text encoder has a short context. Reject truncation rather than silently changing a query.

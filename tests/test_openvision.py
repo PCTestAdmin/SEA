@@ -26,6 +26,12 @@ class OpenVisionTests(unittest.TestCase):
             self.assertFalse(status()['ready_to_attempt'])
             with self.assertRaises(ValueError):model_dir()
 
+    def test_scipy_readiness(self):
+        with patch('sea.openvision.importlib.util.find_spec', side_effect=lambda name: None if name=='scipy' else object()):
+            r=status()
+            self.assertFalse(r['dependencies_discoverable']['scipy'])
+            self.assertFalse(r['ready_to_attempt'])
+
     def test_incomplete(self):
         with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ,{'SEA_OPEN_VISION_DIR':tmp}):
             self.assertFalse(status()['model_files_present'])

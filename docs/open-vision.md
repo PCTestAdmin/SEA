@@ -8,6 +8,8 @@ Install from the source checkout in the SEA environment:
 python -m pip install ".[openvision]"
 ```
 
+The optional extra includes SciPy, which is required by the OWLv2 slow image processor. For an existing installation, reinstall the extra to pick up this dependency. The readiness check also reports SciPy availability.
+
 Explicitly fetch the recommended revision with the Hugging Face Hub CLI in that environment:
 
 ```bash

@@ -2,6 +2,8 @@
 
 ## 0.11.0
 
+- Fix Open Vision preprocessing by declaring SciPy, checking its availability and selecting the slow processor explicitly. Model inference CI must still pass to verify the fix.
+
 - Optional local OWLv2 text-conditioned object localization, annotated matches and readiness checks.
 - Bounded text queries, per-label overlap suppression, weight digest and explicit limitations.
 - Core and MCP tests; separate pretrained OWLv2 workflow on relevant main-branch changes.

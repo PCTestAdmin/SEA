@@ -13,7 +13,7 @@ dependencies = ["mcp>=1.12,<2", "numpy>=1.26,<3", "Pillow>=10.3,<13"]
 
 [project.optional-dependencies]
 vision = ["torch>=2.6,<3", "torchvision>=0.21,<1"]
-openvision = ["torch>=2.6,<3", "torchvision>=0.21,<1", "transformers>=4.57.1,<5", "safetensors>=0.4,<1"]
+openvision = ["torch>=2.6,<3", "torchvision>=0.21,<1", "transformers>=4.57.1,<5", "safetensors>=0.4,<1", "scipy>=1.11,<2"]
 
 [project.scripts]
 sea-mcp = "sea.server:main"
