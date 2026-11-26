@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.25.0
+
+- Add compact_video_overview (MCP) and compact-video (CLI): direct local measurement and projection, one compact text result, 2048–16000-byte JSON budget, bounded 1–6 segments, explicit cursor, all candidate cut ticks and independent audio coverage. No raw evidence round trips or duplicate structured output.
+- Preserve full-resolution evidence tools for targeted refinement. Default temporal sampling stays at 4 fps; 1–2 fps are optional lower-cost modes. Update the agent skill and workflow to prefer the compact path.
+- Add real-video serialized-size regression target (<40% of raw rows), dense-cut budget and pagination, unknown audio, CLI and MCP tests. Actual model token/cost savings and cross-platform CI remain to be measured.
+
 ## 0.24.0
 
 - Add model-free candidate scene navigation over audited portable video evidence. Preserve unknown spans, merge observed boundaries, retain audio independently of visual failures, expose low-level audio and dominant-frequency bin overlap, and link representative samples to segment and evidence IDs.

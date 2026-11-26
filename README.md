@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.24.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.25.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -293,6 +293,16 @@ Or call MCP `relate_video_events` with 1–16 v0.22 analysis envelopes; follow `
 
 [Event relations guide](docs/event-relations.md)
 
+### New in v0.25 — Low-token video workflow
+
+Start with `compact_video_overview` instead of sending full measurement pages to the host and back. SEA decodes and summarizes locally, then returns a single compact JSON text with a strict 2–16 KB output budget (default 6 KB). Follow `next_cursor` without resending previous results. Keep the default 4 fps for temporal detail or select 1–2 fps for a faster, coarser overview.
+
+```bash
+sea compact-video /absolute/path/video.mp4 --output-budget-bytes 6000
+```
+
+All sampled scene-cut candidates are retained, along with visual review timestamps, audio coverage/low-level ranges, and incomplete statuses. Retrieve full evidence or actual images only for the needed intervals. The CI regression test requires the complete compact demo response to be under 40% of the raw measurement rows' serialized JSON size. This is a byte-size target, not a measured model-token or cost saving. [Low-token workflow guide](docs/low-token-video.md).
+
 ### New in v0.24 — Evidence-based scene navigation
 
 `summarize_video_scenes` turns 1–16 portable analysis pages into a compact, chronological scene-candidate timeline. It merges continuous sampled segments across verified boundaries, separates candidate cuts from unknown visual spans, keeps independent audio measurements even if visual decoding fails, and returns representative sample timestamps with evidence references. Audio summaries distinguish observed low-level audio, absent streams and unobserved time.
@@ -392,6 +402,7 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `plan_video_analysis` | Contiguous whole-file segment plan, paginated |
 | `analyze_video_page` | Local clip descriptions and timed speech transcripts |
 | `view_video_segment` | Timestamped ordered frame sheet for host vision |
+| `compact_video_overview` | Direct compact video scan with a strict JSON byte budget and cursor |
 | `summarize_video_scenes` | Candidate scenes, evidence-linked sample times and independent audio coverage |
 | `scan_video_timeline` | Model-free contiguous visual/audio measurements and scene candidates |
 | `read_video_frames` | Consecutive decoded frame ordinals and contact sheet |

@@ -147,10 +147,23 @@ def main(argv=None):
     scenes.add_argument('paths',type=Path,nargs='+')
     scenes.add_argument('--offset',type=int,default=0)
     scenes.add_argument('--limit',type=int,default=20)
+    compact = sub.add_parser('compact-video',help='Low-token direct video overview; raw measurements stay local')
+    compact.add_argument('path')
+    compact.add_argument('--cursor',type=int,default=0)
+    compact.add_argument('--segment-seconds',type=int,default=12)
+    compact.add_argument('--max-segments',type=int,default=3)
+    compact.add_argument('--sample-fps',type=int,default=4)
+    compact.add_argument('--output-budget-bytes',type=int,default=6000)
+    compact.add_argument('--expected-revision')
     guides = sub.add_parser('guided-workflows',help='List workflows or render agent guidance')
     guides.add_argument('workflow',nargs='?',default='')
     args = parser.parse_args(argv)
     try:
+        if args.action == 'compact-video':
+            from .compact_video import overview,encode
+            print(encode(overview(args.path,args.cursor,args.segment_seconds,args.max_segments,
+                                  args.sample_fps,args.output_budget_bytes,args.expected_revision)))
+            return 0
         if args.action == 'analyze':
             from .analysis import analyze_target
             result=analyze_target(args.path,args.cursor,args.segment_seconds,args.page_size,args.sample_fps,

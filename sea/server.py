@@ -359,6 +359,12 @@ def relate_video_events(evidence_pages: list[dict], offset: int = 0, limit: int 
     from .event_relations import relate
     return relate(evidence_pages,offset,limit)
 
+@mcp.tool(structured_output=False)
+def compact_video_overview(path: str, cursor: int = 0, segment_seconds: int = 12, max_segments: int = 3, sample_fps: int = 4, output_budget_bytes: int = 6000, expected_revision: str | None = None) -> list[TextContent]:
+    """Preferred low-token video entry point. Locally scan up to 6 segments; return one compact JSON text with cut ticks, sample hints, audio coverage and next_cursor. Exact JSON byte budget, not model tokens. Refine only needed intervals with full evidence tools."""
+    from .compact_video import overview,encode
+    return [TextContent(type='text',text=encode(overview(path,cursor,segment_seconds,max_segments,sample_fps,output_budget_bytes,expected_revision)))]
+
 @mcp.tool()
 def summarize_video_scenes(evidence_pages: list[dict], offset: int = 0, limit: int = 20) -> dict:
     """Build a compact candidate-scene timeline from 1–16 analyzed video pages, with representative sample times, independent audio coverage and explicit unknown spans. No semantic inference."""

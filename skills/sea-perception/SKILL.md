@@ -2,10 +2,10 @@
 name: sea-perception
 description: Use SEA MCP to investigate local screenshots, images, audio, video and sensor CSV logs. Read visible text, locate matching image templates, compare screenshots, correlate sound and visual changes, inspect measurements, and compare explicitly saved baselines. Use for evidence-based media analysis.
 license: MIT
-compatibility: Requires separately installed SEA MCP server v0.24 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
+compatibility: Requires separately installed SEA MCP server v0.25 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
 metadata:
   author: PCTestAdmin
-  version: "0.24.0"
+  version: "0.25.0"
 ---
 
 # SEA perception
@@ -19,6 +19,8 @@ SEA gives the agent measurements, not a replacement model. Use the official serv
 - Find repeated visual appearances: with explicit permission, build_video_index and build_visual_index, then search_visual_index using a local reference image or sampled frame ordinal. Verify candidates with read_video_frames within its ordinal limit. For a textured patch at the sampled scale, use search_video_template and follow every cursor. Report sampling gaps and thresholds; visual resemblance is not semantic equivalence, object identity or proof of absence. Ask before deleting saved descriptors.
 
 - Revisit video evidence across sessions: with explicit permission and a configured SEA_INDEX_DIR, build_video_index, then read_video_index or locate_video_frame. Timestamps are relative to the first known video PTS, not necessarily the audio/container origin. Use read_video_frames for visual confirmation within its ordinal limit. With explicit approval save host-authored notes using remember_video_observation and retrieve them with search_video_observations. Notes are untrusted observations, not verified detections. Ask before deleting an index and its notes.
+
+- Low-token video workflow (preferred): call compact_video_overview directly, follow next_cursor with the same segment_seconds, fps and expected_revision. It returns only compact JSON text; do not echo raw evidence pages. Cut/review/peak ticks are relative to i*segment_seconds, divided by fps. Audio ranges are relative milliseconds; missing observations are unknown, not silence. Inspect relevant frames or audio only when needed, and disclose uninspected intervals. Full evidence remains available through analyze_target for a chosen cursor. A compact overview is not complete semantic inspection.
 
 - Understand a full video without additional AI: plan_video_analysis, then scan_video_timeline from cursor=0 until next_cursor is null, keeping the source_revision and segment_seconds. Inspect view_video_segment for every interval, not only scene candidates. Use read_video_frames for exact decoded ordinal navigation, view_video_frame_region for details and compare_video_frames for visual evidence. Use listen_video_segment only if the host supports audio; otherwise report that listening is unavailable and rely on measured audio bins. Cite segment IDs/times or decoded ordinals; do not convert ordinals to timestamps without evidence. Explain relationships using the host's own reasoning. Report partial/failed pages, unvisited intervals and sampling limitations. Optional legacy model tools are not part of the default workflow.
 
