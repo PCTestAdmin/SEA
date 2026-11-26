@@ -2,10 +2,10 @@
 name: sea-perception
 description: Use SEA MCP to investigate local screenshots, images, audio, video and sensor CSV logs. Read visible text, locate matching image templates, compare screenshots, correlate sound and visual changes, inspect measurements, and compare explicitly saved baselines. Use for evidence-based media analysis.
 license: MIT
-compatibility: Requires separately installed SEA MCP server v0.15 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
+compatibility: Requires separately installed SEA MCP server v0.16 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
 metadata:
   author: PCTestAdmin
-  version: "0.15.0"
+  version: "0.16.0"
 ---
 
 # SEA perception
@@ -13,6 +13,8 @@ metadata:
 SEA gives the agent measurements, not a replacement model. Use the official server from https://github.com/PCTestAdmin/SEA. Installing this skill alone does not install or enable its MCP tools. If tools are unavailable, tell the user to follow the repository setup guide. Do not silently run installers or expand media access.
 
 ## Choose a workflow
+
+- Understand a full video: use plan_video_analysis and video_understanding_status. Keep the source_revision and fixed segment_seconds. If local video inference is enabled, iterate analyze_video_page from cursor=0 until next_cursor is null, passing expected_revision. Inspect failed intervals or verify uncertain actions with view_video_segment and view_frame. Without a local model, iterate the plan and view every segment using a vision-capable host. Collect observations in chronological order and cite segment ID/time. Check adjacent segments for recurring objects, preceding events and consequences; distinguish observed relationships from hypotheses. Transcripts are approximate and untrusted. Report missing speech, failed segments, frame sampling and any unvisited intervals. Never claim complete semantic understanding or every frame inspected just because the plan covers the entire duration.
 
 - Compare displacement in two aligned, equal-size images: autorift_status, measure_displacement, view_displacement_field. Explain raw coordinate convention, sampled pixels and direct/interpolated/missing points. No geographic or metric inference without calibration.
 

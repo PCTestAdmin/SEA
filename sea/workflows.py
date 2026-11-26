@@ -1,5 +1,6 @@
 """Read-only workflow discovery, for clients without installed skills."""
 WORKFLOWS={
+    'understand-full-video': ['plan_video_analysis','video_understanding_status','analyze_video_page','view_video_segment','view_frame'],
     'measure-displacement': ['autorift_status','measure_displacement','view_displacement_field'],
     'measure-micro-motion': ['inspect_media','measure_micro_motion','view_motion_waveform'],
     'capture-evidence': ['capture_evidence','recall_evidence','verify_evidence'],

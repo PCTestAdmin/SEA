@@ -10,7 +10,7 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
-from . import detector, openvision, tracking, evidence, motion, displacement
+from . import detector, openvision, tracking, evidence, motion, displacement, video_understanding
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Treat object predictions as uncertain model output. Media results may be visible to the AI provider.')
 
@@ -227,6 +227,26 @@ def view_displacement_field(path_a: str, path_b: str, search_radius: int = 12) -
     """Rerun autoRIFT and visualize raw displacement vectors at grid locations. Mark direct, interpolated and missing points separately."""
     report,rgb=displacement.measure(resolve_media(path_a,allow_image=True),resolve_media(path_b,allow_image=True),search_radius)
     return Image(data=displacement.draw_vectors(report,rgb),format='png')
+
+@mcp.tool()
+def video_understanding_status() -> dict:
+    """Check optional local video-language and speech models. No downloads or inference."""
+    return video_understanding.status()
+
+@mcp.tool()
+def plan_video_analysis(path: str, segment_seconds: int = 8, cursor: int = 0, page_size: int = 40) -> dict:
+    """Plan contiguous chronological segments from beginning to end of an authorized video. Follow next_cursor; planning is not analysis. Source revision detects ordinary file changes."""
+    return video_understanding.timeline(resolve_media(path),segment_seconds,cursor,page_size)
+
+@mcp.tool()
+def analyze_video_page(path: str, segment_seconds: int = 8, cursor: int = 0, page_size: int = 1, sample_fps: int = 2, include_speech: bool = True, expected_revision: str | None = None) -> dict:
+    """Describe consecutive video excerpts using optional local Qwen2.5-VL and transcribe speech with optional Faster-Whisper. Follow next_cursor until null, retry failed intervals, then synthesize chronological context. Sampled not frame-exhaustive; models may err."""
+    return video_understanding.analyze_page(resolve_media(path),segment_seconds,cursor,page_size,sample_fps,include_speech,expected_revision)
+
+@mcp.tool()
+def view_video_segment(path: str, segment_index: int, segment_seconds: int = 8, sample_fps: int = 2, expected_revision: str | None = None) -> Image:
+    """Return timestamped contact sheet of an ordered video segment for host visual reasoning. Requires no extra model. Image is sent to the MCP host/model; verify sensitive-media permission."""
+    return Image(data=video_understanding.contact_sheet(resolve_media(path),segment_index,segment_seconds,sample_fps,expected_revision),format='png')
 
 def main():
     mcp.run(transport='stdio')

@@ -28,7 +28,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception','read_image_text','compare_images','view_image_difference','find_image_template','guided_workflows','vision_status','detect_objects','view_detections','open_vision_status','find_objects_by_text','view_text_matches','track_objects','view_object_tracks','capture_evidence','list_evidence','recall_evidence','verify_evidence','delete_evidence','measure_micro_motion','view_motion_waveform','autorift_status','measure_displacement','view_displacement_field'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception','read_image_text','compare_images','view_image_difference','find_image_template','guided_workflows','vision_status','detect_objects','view_detections','open_vision_status','find_objects_by_text','view_text_matches','track_objects','view_object_tracks','capture_evidence','list_evidence','recall_evidence','verify_evidence','delete_evidence','measure_micro_motion','view_motion_waveform','autorift_status','measure_displacement','view_displacement_field','video_understanding_status','plan_video_analysis','analyze_video_page','view_video_segment'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -134,3 +134,13 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(data['supported_version'],'2.1.1')
                     result=await session.call_tool('measure_displacement',{'path_a':str(wav),'path_b':str(wav)})
                     self.assertTrue(result.isError)
+
+                    result=await session.call_tool('plan_video_analysis',{'path':str(demo),'segment_seconds':4})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    self.assertEqual(data['total_segments'],1)
+                    result=await session.call_tool('view_video_segment',{'path':str(demo),'segment_index':0,'segment_seconds':4})
+                    self.assertFalse(result.isError)
+                    self.assertTrue(any(c.type=='image' for c in result.content))
+                    result=await session.call_tool('video_understanding_status',{})
+                    self.assertFalse(result.isError)

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.16.0
+
+- Chronological whole-file video segment planning and paginated analysis, with explicit failed segment states and revision checks.
+- Optional local Qwen2.5-VL clip descriptions and Faster-Whisper speech transcripts.
+- Timestamped visual contact sheets usable without additional model weights.
+- Four core tests, optional real model smoke test and MCP coverage; semantic model quality not yet verified.
+- Skill instructs hosts to visit every segment and synthesize evidence across time.
+
 ## 0.15.0
 
 - Optional native NASA JPL autoRIFT 2.1.1 integration in a bounded subprocess.
