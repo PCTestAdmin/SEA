@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 import sqlite3
+from contextlib import closing
 import wave
 from sea import evidence
 
@@ -45,7 +46,7 @@ class EvidenceTests(unittest.TestCase):
 
     def test_tamper(self):
         r=self.capture()
-        with sqlite3.connect(self.store/'sea-evidence.sqlite3') as db:
+        with closing(sqlite3.connect(self.store/'sea-evidence.sqlite3')) as db, db:
             db.execute('UPDATE evidence SET payload=?',(b'{}',))
         with self.assertRaisesRegex(ValueError,'digest mismatch'):evidence.recall(r['id'])
 
@@ -59,6 +60,6 @@ class EvidenceTests(unittest.TestCase):
             with self.assertRaises(ValueError):self.capture()
 
     def test_no_unrelated_database_overwrite(self):
-        with sqlite3.connect(self.store/'sea-evidence.sqlite3') as db:
+        with closing(sqlite3.connect(self.store/'sea-evidence.sqlite3')) as db, db:
             db.execute('CREATE TABLE unrelated (id INTEGER)')
         with self.assertRaises(ValueError):self.capture()

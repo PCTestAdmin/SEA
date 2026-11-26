@@ -2,6 +2,8 @@
 
 ## 0.14.0
 
+- Fix Windows evidence test cleanup: explicitly close SQLite connections after test transactions.
+
 - Experimental small mechanical image-translation estimates, optional reference subtraction and dominant vibration frequency.
 - Numeric and waveform MCP tools, synthetic subpixel-motion AVI fixture and five tests including decoded video.
 - No new dependencies or third-party research code. Not full motion magnification, dense optical flow or calibrated physical measurements.
