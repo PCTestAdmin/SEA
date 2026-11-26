@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.23.0
+
+- Add offline paired Reality Benchmark CLI: freeze hashed MP4 suites, generate answer-free packets and run templates, score matched model runs with accuracy, gains/regressions, abstentions, per-category and real/synthetic breakdowns and runtime.
+- Document controlled host comparison and real-world footage preparation, including external Perception Test data guidance. No third-party clips or measured model scores bundled.
+- Add actual MP4 decoding smoke test and deterministic scorer/CLI regression coverage. No new mandatory dependencies.
+- All four v0.22 CI workflows passed. v0.23 CI not yet verified.
+
 ## 0.22.0
 
 - Add 4 × 4 changed-tile measurements to sampled visual comparisons and model-free event relations across contiguous complete evidence pages.

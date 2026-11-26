@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.22.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.23.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -281,7 +281,7 @@ sea audit-video-coverage page0.json page1.json
 
 [Coverage audit guide](docs/video-coverage.md). A complete audit of sampled measurements does not prove that every native frame was inspected or that the host understood every event. No new model or dependency required.
 
-### New in v0.22 — Spatiotemporal event relations
+### Spatiotemporal event relations
 
 SEA measures changed 4 × 4 image tiles and connects consecutive visual changes within two seconds, reporting overlap of their tile sets. It also links nearby audio low-level transitions within half a second. Each event references the source evidence envelope and segment. Gaps and incomplete segments interrupt the chain; scene candidates are not treated as object tracking.
 
@@ -292,6 +292,16 @@ sea relate-video-events page0.json page1.json --limit 50
 Or call MCP `relate_video_events` with 1–16 v0.22 analysis envelopes; follow `next_offset`. No new model or dependencies. The host must inspect the actual media and reason about meaning.
 
 [Event relations guide](docs/event-relations.md)
+
+### New in v0.23 — SEA Reality Benchmark
+
+Evaluate the same host model with and without SEA on identical MP4 inputs. Freeze video hashes and human-verified multiple-choice questions, keep answer keys separate, then score both runs locally. The report distinguishes gains, regressions, abstentions, real versus synthetic clips and runtime. The included controlled MP4 smoke fixture validates the evaluation pipeline; no real-world model improvement has been measured yet.
+
+```bash
+sea-benchmark --help
+```
+
+[Benchmark protocol and real-video dataset guidance](docs/reality-benchmark.md) · [Controlled smoke spec](benchmarks/smoke_spec.json)
 
 ## What could you use SEA for?
 

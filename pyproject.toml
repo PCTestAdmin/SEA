@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sea-perception-mcp"
-version = "0.22.0"
+version = "0.23.0"
 description = "Sensory Extension for Agents: local, measurable media and signal perception for MCP clients"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -21,6 +21,7 @@ speech = ["faster-whisper>=1.1,<2"]
 [project.scripts]
 sea-mcp = "sea.server:main"
 sea = "sea.setup:main"
+sea-benchmark = "sea.benchmark:main"
 
 [tool.setuptools.packages.find]
 include = ["sea*"]

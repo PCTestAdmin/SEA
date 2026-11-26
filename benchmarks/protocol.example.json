@@ -1,0 +1,8 @@
+{
+  "pair_id": "replace-with-unique-pair-id",
+  "model": "replace-with-exact-model-version",
+  "host": "replace-with-host-version",
+  "settings": "record temperature, reasoning effort, system prompt and seed if supported",
+  "shared_input": "same original MP4 input and question packet in both conditions",
+  "budget": "same predefined wall-clock/token budget; only SEA tools differ"
+}

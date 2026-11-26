@@ -1,0 +1,46 @@
+{
+  "name": "SEA controlled MP4 smoke suite — NOT real-world evidence",
+  "clips": [
+    {
+      "id": "demo01",
+      "file": "demo.mp4",
+      "source_kind": "synthetic",
+      "source": "SEA examples/make_demo.py, transcoded to MP4",
+      "questions": [
+        {
+          "id": "q01",
+          "category": "temporal_order",
+          "question": "What is the order of the three background states?",
+          "options": [
+            "White, black, white",
+            "Black, white, black",
+            "Black throughout"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "q02",
+          "category": "audio_visual",
+          "question": "During which background state is the tone audible?",
+          "options": [
+            "White",
+            "Black",
+            "Both"
+          ],
+          "answer": 0
+        },
+        {
+          "id": "q03",
+          "category": "event_count",
+          "question": "How many times does the background switch color?",
+          "options": [
+            "One",
+            "Three",
+            "Two"
+          ],
+          "answer": 2
+        }
+      ]
+    }
+  ]
+}
