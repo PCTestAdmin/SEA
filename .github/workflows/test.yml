@@ -29,4 +29,9 @@ jobs:
       - run: sea --version
       - run: sea doctor
       - run: python -c "import mcp; import sea.server"
-      - run: python -m unittest discover -s tests -v
+      - name: Generate bounded demo fixture
+        run: python examples/make_demo.py ci-demo.mp4
+        timeout-minutes: 2
+      - name: Run test suite
+        run: python -m unittest discover -s tests -v
+        timeout-minutes: 5

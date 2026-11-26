@@ -39,7 +39,7 @@ class EngineTests(unittest.TestCase):
             with self.assertRaises(ValueError):window(s,d)
     def test_audiovisual_demo(self):
         p=self.root/'demo.mp4'
-        subprocess.run([sys.executable,str(Path(__file__).resolve().parents[1]/'examples'/'make_demo.py'),str(p)],check=True,capture_output=True)
+        subprocess.run([sys.executable,str(Path(__file__).resolve().parents[1]/'examples'/'make_demo.py'),str(p)],check=True,capture_output=True,timeout=45)
         report=analyze(p,0,6)
         self.assertGreaterEqual(report['observations']['visual_change_bins'],2)
         self.assertGreaterEqual(report['observations']['low_level_bins'],6)

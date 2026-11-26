@@ -47,7 +47,7 @@ class VisionTests(unittest.TestCase):
     def test_fixture(self):
         with tempfile.TemporaryDirectory() as tmp:
             p=Path(tmp)/'demo.mp4'
-            subprocess.run([sys.executable,str(Path(__file__).resolve().parents[1]/'examples'/'make_demo.py'),str(p)],check=True,capture_output=True)
+            subprocess.run([sys.executable,str(Path(__file__).resolve().parents[1]/'examples'/'make_demo.py'),str(p)],check=True,capture_output=True,timeout=45)
             r=investigate(p,0,6)
             self.assertEqual(r['available_modalities'],{'audio':True,'video':True})
             self.assertGreaterEqual(len(r['correlations']),2)

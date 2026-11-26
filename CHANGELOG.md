@@ -2,6 +2,8 @@
 
 ## 0.7.0
 
+- CI hotfix: replace hanging lavfi fixture generation with finite raw YUV frames, single-thread encoding and bounded subprocesses. Windows verification is pending.
+
 - Bounded coarse-to-fine recording survey: up to five six-second windows, up to two four-second refinements.
 - Ranked audiovisual evidence candidates, explicit requested-range coverage gaps and visible failures.
 - Five survey tests and additional MCP integration coverage.
