@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.21.0
+
+- Normalize time arguments before shared analysis and hashing to fix CLI/Python/MCP evidence parity (integer versus floating-point representations).
+- Add model-free video coverage auditing via MCP and CLI: validate portable evidence, detect missing ranges, reject duplicate segments and mixed settings, distinguish incomplete modalities and unavailable boundaries.
+- Update the README, official skill, workflow guidance and regression tests. No new dependencies or persistent writes.
+- Cross-platform CI for this version is not yet verified.
+
 ## 0.20.0
 
 - Shared target-aware model-free analysis for MCP and the SEA CLI, with portable digest-identified evidence and bounded inline projections.

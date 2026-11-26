@@ -137,6 +137,8 @@ def main(argv=None):
     views.add_argument('--view',choices=['summary','page'],default='summary')
     views.add_argument('--offset',type=int,default=0)
     views.add_argument('--limit',type=int,default=20)
+    audit = sub.add_parser('audit-video-coverage',help='Check coverage of 1–16 saved video evidence pages')
+    audit.add_argument('paths',type=Path,nargs='+')
     guides = sub.add_parser('guided-workflows',help='List workflows or render agent guidance')
     guides.add_argument('workflow',nargs='?',default='')
     args = parser.parse_args(argv)
@@ -155,6 +157,19 @@ def main(argv=None):
                 raise ValueError('Report file exceeds CLI input limit.')
             result=inspect_view(json.loads(raw.decode('utf-8-sig'),object_pairs_hook=unique_object),args.view,args.offset,args.limit)
             print(json.dumps(result,indent=2,allow_nan=False))
+            return 0
+        if args.action == 'audit-video-coverage':
+            from .analysis import audit_video_coverage,MAX_EVIDENCE
+            if not 1<=len(args.paths)<=16:
+                raise ValueError('Supply 1–16 complete video evidence envelopes.')
+            pages=[]
+            for path in args.paths:
+                with path.open('rb') as f:
+                    raw=f.read(4*MAX_EVIDENCE+1)
+                if len(raw)>4*MAX_EVIDENCE:
+                    raise ValueError('Report file exceeds CLI input limit.')
+                pages.append(json.loads(raw.decode('utf-8-sig'),object_pairs_hook=unique_object))
+            print(json.dumps(audit_video_coverage(pages),indent=2,allow_nan=False))
             return 0
         if args.action == 'guided-workflows':
             from .workflows import guidance

@@ -348,6 +348,11 @@ def inspect_analysis_view(evidence: dict, view: str = 'summary', offset: int = 0
     """Validate the digest of a complete inline analyze_target envelope and return a bounded summary or collection page. No files, analysis or storage."""
     return analysis.inspect_view(evidence,view,offset,limit)
 
+@mcp.tool()
+def audit_video_coverage(evidence_pages: list[dict]) -> dict:
+    """Audit 1–16 portable video evidence pages for missing, duplicate and incomplete segments. No decoding, storage or semantic inference."""
+    return analysis.audit_video_coverage(evidence_pages)
+
 @mcp.prompt()
 def investigate_media_evidence() -> str:
     """Start a model-free investigation with portable evidence."""

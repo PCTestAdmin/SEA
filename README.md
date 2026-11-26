@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.20.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.21.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -256,7 +256,7 @@ Find recurring visual appearances in a video without an additional AI model. Bui
 
 [Visual Search guide](docs/visual-search.md)
 
-### New in v0.20 — One investigation interface
+### One investigation interface
 
 Start with `analyze_target` through MCP or `sea analyze` at the terminal. SEA selects the model-free workflow for the target and returns a portable evidence envelope, coverage and follow-up tools. Native MCP prompts and the same terminal guidance help agents investigate rather than guess.
 
@@ -268,6 +268,18 @@ sea guided-workflows understand-full-video
 ```
 
 [Agent workflows, CLI and evidence contracts](docs/agent-workflows.md)
+
+### New in v0.21 — Video coverage audit
+
+Agents can now audit portable video analysis pages with `audit_video_coverage` (MCP) or `sea audit-video-coverage` (CLI). SEA checks the source revision and sampling settings, rejects overlapping segments, reports missing time ranges and separates submitted rows from incomplete visual/audio measurements or unavailable boundaries.
+
+```bash
+sea analyze /absolute/path/to/media/demo.avi --segment-seconds 4 --page-size 1 > page0.json
+sea analyze /absolute/path/to/media/demo.avi --segment-seconds 4 --page-size 1 --cursor 1 > page1.json
+sea audit-video-coverage page0.json page1.json
+```
+
+[Coverage audit guide](docs/video-coverage.md). A complete audit of sampled measurements does not prove that every native frame was inspected or that the host understood every event. No new model or dependency required.
 
 ## What could you use SEA for?
 

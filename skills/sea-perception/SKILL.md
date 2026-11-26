@@ -2,10 +2,10 @@
 name: sea-perception
 description: Use SEA MCP to investigate local screenshots, images, audio, video and sensor CSV logs. Read visible text, locate matching image templates, compare screenshots, correlate sound and visual changes, inspect measurements, and compare explicitly saved baselines. Use for evidence-based media analysis.
 license: MIT
-compatibility: Requires separately installed SEA MCP server v0.20 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
+compatibility: Requires separately installed SEA MCP server v0.21 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
 metadata:
   author: PCTestAdmin
-  version: "0.20.0"
+  version: "0.21.0"
 ---
 
 # SEA perception
@@ -14,7 +14,7 @@ SEA gives the agent measurements, not a replacement model. Use the official serv
 
 ## Choose a workflow
 
-- Start with analyze_target for a local video, audio, still image or sensor CSV. Read the evidence record, coverage, and follow_up_tools. For video follow record.next_cursor and preserve source revision/settings; inspect every relevant visual interval. Use inspect_analysis_view on the full inline envelope for summaries or pages. The digest is not proof of authenticity. Native MCP prompts and guided_workflows share the same guidance.
+- Start with analyze_target for a local video, audio, still image or sensor CSV. Read the evidence record, coverage, and follow_up_tools. For video follow record.next_cursor and preserve source revision/settings; inspect every relevant visual interval. Use inspect_analysis_view on the full inline envelope for summaries or pages. For video, use audit_video_coverage on up to 16 complete analyze_target envelopes to detect missing ranges, incomplete modalities and unavailable boundaries. Audit batches separately for longer recordings and track global gaps. A complete sampled plan is not semantic or native-frame coverage. The digest is not proof of authenticity. Native MCP prompts and guided_workflows share the same guidance.
 
 - Find repeated visual appearances: with explicit permission, build_video_index and build_visual_index, then search_visual_index using a local reference image or sampled frame ordinal. Verify candidates with read_video_frames within its ordinal limit. For a textured patch at the sampled scale, use search_video_template and follow every cursor. Report sampling gaps and thresholds; visual resemblance is not semantic equivalence, object identity or proof of absence. Ask before deleting saved descriptors.
 
