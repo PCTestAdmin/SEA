@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.23.3%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.24.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -293,6 +293,16 @@ Or call MCP `relate_video_events` with 1–16 v0.22 analysis envelopes; follow `
 
 [Event relations guide](docs/event-relations.md)
 
+### New in v0.24 — Evidence-based scene navigation
+
+`summarize_video_scenes` turns 1–16 portable analysis pages into a compact, chronological scene-candidate timeline. It merges continuous sampled segments across verified boundaries, separates candidate cuts from unknown visual spans, keeps independent audio measurements even if visual decoding fails, and returns representative sample timestamps with evidence references. Audio summaries distinguish observed low-level audio, absent streams and unobserved time.
+
+```bash
+sea summarize-video-scenes page0.json page1.json --limit 20
+```
+
+Use the same tool name via MCP and follow `next_offset`. No additional model, dependency, media decode or persistent storage. These are navigation hints, not semantic scene descriptions or exhaustive frame coverage. [Scene navigation guide](docs/scene-navigation.md).
+
 ### New in v0.23 — SEA Reality Benchmark
 
 Evaluate the same host model with and without SEA on identical MP4 inputs. Freeze video hashes and human-verified multiple-choice questions, keep answer keys separate, then score both runs locally. The report distinguishes gains, regressions, abstentions, real versus synthetic clips and runtime. The included controlled MP4 smoke fixture validates the evaluation pipeline; no real-world model improvement has been measured yet.
@@ -382,6 +392,7 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `plan_video_analysis` | Contiguous whole-file segment plan, paginated |
 | `analyze_video_page` | Local clip descriptions and timed speech transcripts |
 | `view_video_segment` | Timestamped ordered frame sheet for host vision |
+| `summarize_video_scenes` | Candidate scenes, evidence-linked sample times and independent audio coverage |
 | `scan_video_timeline` | Model-free contiguous visual/audio measurements and scene candidates |
 | `read_video_frames` | Consecutive decoded frame ordinals and contact sheet |
 | `view_video_frame_region` | Crop an exact decoded frame ordinal |

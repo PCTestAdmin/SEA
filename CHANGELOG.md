@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.24.0
+
+- Add model-free candidate scene navigation over audited portable video evidence. Preserve unknown spans, merge observed boundaries, retain audio independently of visual failures, expose low-level audio and dominant-frequency bin overlap, and link representative samples to segment and evidence IDs.
+- Expose summarize_video_scenes over MCP, CLI and agent workflows; include real AVI, malformed evidence, partial modality, boundary, pagination and MCP contract tests. No added runtime dependencies or semantic inference. Cross-platform CI must verify this release.
+
 ## 0.23.3
 
 - Fix inconsistent audio coverage and event-relation boundaries: measured segments already allowed up to 30 ms of decoder shortfall, but relation detection required contiguous bins within about 1 ms. Preserve observed level changes across joined measured segments only within the existing coverage tolerance, explicitly expose the unobserved gap on the event and its visual link, and never fill missing samples.

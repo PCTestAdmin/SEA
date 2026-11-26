@@ -143,6 +143,10 @@ def main(argv=None):
     relations.add_argument('paths',type=Path,nargs='+')
     relations.add_argument('--offset',type=int,default=0)
     relations.add_argument('--limit',type=int,default=50)
+    scenes = sub.add_parser('summarize-video-scenes',help='Summarize candidate scenes from 1–16 video evidence pages')
+    scenes.add_argument('paths',type=Path,nargs='+')
+    scenes.add_argument('--offset',type=int,default=0)
+    scenes.add_argument('--limit',type=int,default=20)
     guides = sub.add_parser('guided-workflows',help='List workflows or render agent guidance')
     guides.add_argument('workflow',nargs='?',default='')
     args = parser.parse_args(argv)
@@ -162,7 +166,7 @@ def main(argv=None):
             result=inspect_view(json.loads(raw.decode('utf-8-sig'),object_pairs_hook=unique_object),args.view,args.offset,args.limit)
             print(json.dumps(result,indent=2,allow_nan=False))
             return 0
-        if args.action in ('audit-video-coverage','relate-video-events'):
+        if args.action in ('audit-video-coverage','relate-video-events','summarize-video-scenes'):
             from .analysis import audit_video_coverage,MAX_EVIDENCE
             if not 1<=len(args.paths)<=16:
                 raise ValueError('Supply 1–16 complete video evidence envelopes.')
@@ -176,6 +180,9 @@ def main(argv=None):
             if args.action=='relate-video-events':
                 from .event_relations import relate
                 report=relate(pages,args.offset,args.limit)
+            elif args.action=='summarize-video-scenes':
+                from .scene_index import summarize
+                report=summarize(pages,args.offset,args.limit)
             else:
                 report=audit_video_coverage(pages)
             print(json.dumps(report,indent=2,allow_nan=False))

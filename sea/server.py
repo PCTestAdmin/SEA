@@ -359,6 +359,12 @@ def relate_video_events(evidence_pages: list[dict], offset: int = 0, limit: int 
     from .event_relations import relate
     return relate(evidence_pages,offset,limit)
 
+@mcp.tool()
+def summarize_video_scenes(evidence_pages: list[dict], offset: int = 0, limit: int = 20) -> dict:
+    """Build a compact candidate-scene timeline from 1–16 analyzed video pages, with representative sample times, independent audio coverage and explicit unknown spans. No semantic inference."""
+    from .scene_index import summarize
+    return summarize(evidence_pages,offset,limit)
+
 @mcp.prompt()
 def investigate_media_evidence() -> str:
     """Start a model-free investigation with portable evidence."""
