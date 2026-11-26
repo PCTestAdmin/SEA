@@ -2,10 +2,10 @@
 name: sea-perception
 description: Use SEA MCP to investigate local screenshots, images, audio, video and sensor CSV logs. Read visible text, locate matching image templates, compare screenshots, correlate sound and visual changes, inspect measurements, and compare explicitly saved baselines. Use for evidence-based media analysis.
 license: MIT
-compatibility: Requires separately installed SEA MCP server v0.13 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
+compatibility: Requires separately installed SEA MCP server v0.14 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
 metadata:
   author: PCTestAdmin
-  version: "0.13.0"
+  version: "0.14.0"
 ---
 
 # SEA perception
@@ -13,6 +13,8 @@ metadata:
 SEA gives the agent measurements, not a replacement model. Use the official server from https://github.com/PCTestAdmin/SEA. Installing this skill alone does not install or enable its MCP tools. If tools are unavailable, tell the user to follow the repository setup guide. Do not silently run installers or expand media access.
 
 ## Choose a workflow
+
+- Mechanical small-motion measurement: use inspect_media, then measure_micro_motion with a textured normalized region, a supported sampling rate and optionally a nonoverlapping stationary reference region. Use view_motion_waveform for visual evidence. Explain sampling, residual rejection and aliasing; no audio recovery, physical calibration or diagnosis.
 
 - Reusable evidence: ask for explicit permission, then capture_evidence with a supported analyzer. Use recall_evidence to retrieve the JSON envelope and verify_evidence to check source byte equality. Never treat hashes as signatures or proof of measurement accuracy. Ask before deletion.
 

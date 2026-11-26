@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.13.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.14.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -209,11 +209,21 @@ where the detected object moved, and where tracking was interrupted.
 
 [Object Tracking guide](docs/tracking.md) · [Tests](tests/test_tracking.py)
 
-### New in v0.13 — verifiable evidence
+### Verifiable evidence
 
 Explicitly capture a supported measurement as a content-addressed JSON report with source SHA-256, analyzer parameters and engine version. Retrieve it in future sessions and check whether the source bytes still match.
 
 [Evidence guide](docs/evidence.md)
+
+### New in v0.14 — Micro-Motion Intelligence
+
+Measure small image translations in a selected mechanical region, estimate dominant vibration frequency and inspect a displacement waveform. Optional reference-region subtraction compensates shared translation. No extra AI model needed.
+
+```bash
+python examples/make_motion_demo.py /absolute/path/to/media/motion.avi
+```
+
+Ask your agent to measure the region [0.1,0.1,0.9,0.9] at 24 fps for 4 seconds. The synthetic fixture has a known 3 Hz, 0.4 pixel oscillation. These are fixture inputs; see CI for validation. [Motion guide](docs/micro-motion.md)
 
 ## What could you use SEA for?
 
@@ -285,6 +295,8 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `recall_evidence` | Retrieve and export a digest-checked JSON envelope |
 | `verify_evidence` | Compare source bytes and stored report digest |
 | `delete_evidence` | Explicitly delete one report |
+| `measure_micro_motion` | Small image displacement and dominant vibration frequency estimates |
+| `view_motion_waveform` | Plot measured displacement with invalid-sample gaps |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -329,6 +341,7 @@ See [installation and usage details](docs/installation.md).
 - [x] Optional text-conditioned OWLv2 detection
 - [x] Sampled COCO object tracking and visual contact sheets
 - [x] Opt-in content-addressed evidence reports for selected analyzers
+- [x] Experimental small-motion measurement and waveform
 - [ ] One-click desktop extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
@@ -383,6 +396,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Micro-Motion](docs/micro-motion.md) | Mechanical motion measurement and reproducible fixture |
 | [Evidence system](docs/evidence.md) | Content-addressed reports and source verification |
 | [Object Tracking](docs/tracking.md) | Sampled tracks, ambiguity handling and image-space movement |
 | [Open Vision](docs/open-vision.md) | Optional text-conditioned detection |

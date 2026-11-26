@@ -2,6 +2,7 @@
 
 | Goal | First tool | Follow-up |
 | --- | --- | --- |
+| Measure small mechanical image motion | inspect_media, measure_micro_motion | view_motion_waveform |
 | Preserve a measurement | capture_evidence (explicit approval) | recall_evidence, verify_evidence |
 | Follow objects in a video | vision_status, track_objects | view_object_tracks |
 | Find objects by text | open_vision_status, find_objects_by_text | view_text_matches |

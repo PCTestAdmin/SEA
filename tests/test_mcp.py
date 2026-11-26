@@ -28,7 +28,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception','read_image_text','compare_images','view_image_difference','find_image_template','guided_workflows','vision_status','detect_objects','view_detections','open_vision_status','find_objects_by_text','view_text_matches','track_objects','view_object_tracks','capture_evidence','list_evidence','recall_evidence','verify_evidence','delete_evidence'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception','read_image_text','compare_images','view_image_difference','find_image_template','guided_workflows','vision_status','detect_objects','view_detections','open_vision_status','find_objects_by_text','view_text_matches','track_objects','view_object_tracks','capture_evidence','list_evidence','recall_evidence','verify_evidence','delete_evidence','measure_micro_motion','view_motion_waveform'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -116,3 +116,14 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     self.assertTrue(data['source_matches'])
                     result=await session.call_tool('delete_evidence',{'record_id':key,'confirm':True})
                     self.assertFalse(result.isError)
+
+                    import subprocess
+                    demo=Path(tmp)/'motion.avi'
+                    subprocess.run([sys.executable,str(Path(__file__).resolve().parents[1]/'examples'/'make_motion_demo.py'),str(demo)],check=True,timeout=30)
+                    result=await session.call_tool('measure_micro_motion',{'path':str(demo),'box':[.1,.1,.9,.9]})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    self.assertAlmostEqual(data['frequency_x']['peak_hz'],3,places=2)
+                    result=await session.call_tool('view_motion_waveform',{'path':str(demo),'box':[.1,.1,.9,.9]})
+                    self.assertFalse(result.isError)
+                    self.assertTrue(any(c.type=='image' for c in result.content))

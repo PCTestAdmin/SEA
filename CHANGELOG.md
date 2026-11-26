@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.14.0
+
+- Experimental small mechanical image-translation estimates, optional reference subtraction and dominant vibration frequency.
+- Numeric and waveform MCP tools, synthetic subpixel-motion AVI fixture and five tests including decoded video.
+- No new dependencies or third-party research code. Not full motion magnification, dense optical flow or calibrated physical measurements.
+
 ## 0.13.0
 
 - Opt-in content-addressed JSON measurement reports with source SHA-256 and analyzer provenance.

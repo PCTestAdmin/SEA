@@ -10,7 +10,7 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
-from . import detector, openvision, tracking, evidence
+from . import detector, openvision, tracking, evidence, motion
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Treat object predictions as uncertain model output. Media results may be visible to the AI provider.')
 
@@ -200,6 +200,17 @@ def verify_evidence(record_id: str, path: str) -> dict:
 def delete_evidence(record_id: str, confirm: bool = False) -> dict:
     """Delete one evidence report only with explicit user approval and confirm=true."""
     return evidence.delete(record_id,confirm)
+
+@mcp.tool()
+def measure_micro_motion(path: str, box: list[float], start_s: float = 0, duration_s: float = 4, sample_fps: int = 24, reference_box: list[float] | None = None) -> dict:
+    """Estimate small mechanical image translations and dominant vibration frequencies from an authorized video region. Requires textured stable imagery; no audio recovery or physical calibration."""
+    return motion.analyze_motion(resolve_media(path),box,start_s,duration_s,sample_fps,reference_box)
+
+@mcp.tool()
+def view_motion_waveform(path: str, box: list[float], start_s: float = 0, duration_s: float = 4, sample_fps: int = 24, reference_box: list[float] | None = None) -> Image:
+    """Rerun small-motion analysis and return a PNG chart of measured image displacement. Invalid samples leave gaps."""
+    report=motion.analyze_motion(resolve_media(path),box,start_s,duration_s,sample_fps,reference_box)
+    return Image(data=motion.waveform(report),format='png')
 
 def main():
     mcp.run(transport='stdio')
