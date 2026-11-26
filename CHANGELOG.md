@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0
+
+- Opt-in local SQLite history for measured audio and sensor baselines.
+- Six MCP tools for saving, listing, recalling, comparing and deleting measurement summaries.
+- Bounded storage (100 records), no raw media or source paths, no automatic capture.
+- Five memory tests and expanded protocol checks.
+- Updated SPDX license metadata.
+
 ## 0.7.0
 
 - CI hotfix: replace hanging lavfi fixture generation with finite raw YUV frames, single-thread encoding and bounded subprocesses. Windows verification is pending.

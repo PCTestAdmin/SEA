@@ -71,7 +71,7 @@ In Claude Desktop, open the local MCP config (Settings > Developer > Edit Config
 }
 ```
 
-Restart the MCP client and verify that SEA exposes twelve tools, including investigate_recording. See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
+Restart the MCP client and verify that SEA exposes eighteen tools, including perception memory. Memory operations require optional setup described in [memory.md](memory.md). See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
 
 ## Command-line usage
 

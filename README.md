@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.7.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.8.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -140,7 +140,7 @@ relevant frames. Explain the evidence and what remains unknown.
 
 [Investigation guide](docs/investigation.md) · [Reproducible tests](tests/test_vision.py)
 
-### New in v0.7 — autonomous coarse-to-fine investigation
+### Autonomous coarse-to-fine investigation
 
 SEA can survey a recording, rank measured changes, revisit up to two promising windows and expose what it did not inspect. It operates within a bounded local decoding budget.
 
@@ -151,6 +151,18 @@ parts were not analyzed. Separate observations from hypotheses.
 ```
 
 [Autonomous survey guide](docs/survey.md) · [Survey tests](tests/test_survey.py)
+
+### New in v0.8 — perception memory
+
+Save an audio or sensor baseline explicitly and compare future measurements even after restarting the agent. Memory is disabled by default. Only numeric summaries and user-selected labels are saved; no raw recordings or source paths.
+
+```text
+Save this recording as my reference baseline.
+Compare today's recording with that baseline and report
+the measured differences without guessing the cause.
+```
+
+[Enable and use perception memory](docs/memory.md)
 
 ## What could you use SEA for?
 
@@ -198,6 +210,12 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `inspect_region` | PNG crop of a selected normalized image region |
 | `sense_signals` | Numeric sensor CSV statistics, change events and correlations |
 | `investigate_recording` | Bounded multi-window survey, ranked candidates, targeted refinement and coverage gaps |
+| `remember_audio` | Explicitly save numeric audio baseline |
+| `remember_signals` | Explicitly save numeric sensor baseline |
+| `list_perception_memory` | List saved baseline IDs and labels |
+| `recall_perception` | Retrieve historical evidence |
+| `compare_perception` | Compare compatible saved summaries |
+| `forget_perception` | Explicitly delete one saved record |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -223,6 +241,7 @@ Decoder support depends on the FFmpeg installation. Frame differences are not ob
 
 - Local processing of explicitly configured media folders.
 - No SEA cloud account, remote media URL input, microphone capture or background service.
+- Perception memory is disabled unless SEA_MEMORY_DIR is configured; save and delete operations require explicit user approval.
 - No uploads initiated by SEA. Tool results, including requested frames, are returned to your MCP host and may be transmitted to its model provider.
 - Folder restrictions are not an operating-system sandbox. Use trusted media in a dedicated directory and keep FFmpeg updated.
 
@@ -243,7 +262,7 @@ See [installation and usage details](docs/installation.md).
 - [x] Numeric sensor-log analysis and paired-channel correlations
 - [x] Budgeted coarse-to-fine recording investigation
 - [ ] Physical depth and live sensor integration
-- [ ] Persistent perception memory and reusable evidence history
+- [x] Opt-in persistent audio and sensor baseline history
 
 The long-term goal is a modular perception layer for AI agents. We prioritize features that yield observable, testable information rather than adding tools for their own sake.
 
@@ -289,6 +308,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Perception memory](docs/memory.md) | Opt-in SQLite baseline history and comparison |
 | [Autonomous survey](docs/survey.md) | Sampling plan, ranking, refinement and coverage |
 | [Sensor signals](docs/signals.md) | CSV schema, thresholds and paired-channel analysis |
 | [Spatial analysis](docs/spatial.md) | Image grids, normalized regions and crops |

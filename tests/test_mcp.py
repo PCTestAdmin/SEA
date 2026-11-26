@@ -18,13 +18,15 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
             with wave.open(str(wav),'wb') as f:
                 f.setparams((1,2,16000,0,'NONE','not compressed'))
                 f.writeframes(b'\0' * 32000)
-            env=dict(os.environ,SEA_MEDIA_ROOTS=tmp)
+            memory_dir=Path(tmp)/'memory'
+            memory_dir.mkdir()
+            env=dict(os.environ,SEA_MEDIA_ROOTS=tmp,SEA_MEMORY_DIR=str(memory_dir))
             params=StdioServerParameters(command=sys.executable,args=['-m','sea.server'],env=env)
             async with stdio_client(params) as (reader,writer):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -68,3 +70,12 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
                     self.assertEqual(data['scan_windows'][0]['status'],'scanned')
+
+                    result=await session.call_tool('remember_audio',{'path':str(wav),'label':'baseline','duration_s':1})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    record_id=data['id']
+                    result=await session.call_tool('recall_perception',{'record_id':record_id})
+                    self.assertFalse(result.isError)
+                    result=await session.call_tool('forget_perception',{'record_id':record_id,'confirm':True})
+                    self.assertFalse(result.isError)

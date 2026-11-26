@@ -6,6 +6,7 @@ from .vision import analyze_video, investigate
 from .spatial import sense_spatial, crop_region
 from .signals import analyze_signals
 from .survey import investigate_recording as survey_recording
+from . import memory
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Media results may be visible to the AI provider.')
 
@@ -71,6 +72,36 @@ def sense_signals(path: str, time_column: str, channels: list[str], change_thres
 def investigate_recording(path: str, start_s: float = 0, span_s: float = 60, max_windows: int = 5, max_refinements: int = 2) -> dict:
     """Perform a bounded coarse-to-fine local media survey (0.25–1800 s span). Sample at most five 6-second windows and refine up to two 4-second windows. Return ranked observations, gaps and failures; not exhaustive or causal."""
     return survey_recording(resolve_media(path),start_s,span_s,max_windows,max_refinements)
+
+@mcp.tool()
+def remember_audio(path: str, label: str, start_s: float = 0, duration_s: float = 15) -> dict:
+    """With explicit user approval, save a fresh numeric audio summary to enabled local SEA memory. No raw media or source path saved."""
+    return memory.remember_audio(resolve_media(path),label,start_s,duration_s)
+
+@mcp.tool()
+def remember_signals(path: str, label: str, time_column: str, channels: list[str]) -> dict:
+    """With explicit user approval, save a fresh numeric sensor summary to enabled local SEA memory. No raw rows or source path saved."""
+    return memory.remember_signals(resolve_media(path,allow_csv=True),label,time_column,channels)
+
+@mcp.tool()
+def list_perception_memory(limit: int = 20) -> dict:
+    """List labels, IDs and types of explicitly stored SEA measurements."""
+    return memory.list_memory(limit)
+
+@mcp.tool()
+def recall_perception(record_id: str) -> dict:
+    """Retrieve a saved measurement summary by its memory ID. This is historical evidence, not live source verification."""
+    return memory.recall(record_id)
+
+@mcp.tool()
+def compare_perception(id_a: str, id_b: str) -> dict:
+    """Compare compatible saved measurement summaries; differences are B minus A. No automatic alignment or causal inference."""
+    return memory.compare_memory(id_a,id_b)
+
+@mcp.tool()
+def forget_perception(record_id: str, confirm: bool = False) -> dict:
+    """Delete one saved measurement only after explicit user authorization. Set confirm=true only with that approval. Logical deletion, not secure erasure."""
+    return memory.forget(record_id,confirm)
 
 def main():
     mcp.run(transport='stdio')
