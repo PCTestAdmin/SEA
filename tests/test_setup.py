@@ -29,6 +29,17 @@ class SetupTests(unittest.TestCase):
         self.assertEqual(register(self.config, self.media, apply=True)['status'], 'unchanged')
         self.assertFalse(list(self.config.parent.glob('*.bak')))
 
+    def test_video_profile_preview_and_apply(self):
+        preview=register(self.config,self.media,profile='video')
+        self.assertEqual(preview['entry']['env']['SEA_MCP_PROFILE'],'video')
+        self.assertFalse(self.config.exists())
+        register(self.config,self.media,profile='video',apply=True)
+        self.assertEqual(json.loads(self.config.read_text())['mcpServers']['sea'],entry(self.media,'video'))
+        with self.assertRaises(ValueError):
+            register(self.config,self.media,profile='full',apply=True)
+        with self.assertRaises(ValueError):
+            entry(self.media,'invalid')
+
     def test_preserve_and_backup(self):
         original = b'{"mcpServers":{"other":{"command":"custom","env":{"TOKEN":"SEA_TEST_SECRET_8274"}}},"theme":"dark"}\n'
         self.write(original)

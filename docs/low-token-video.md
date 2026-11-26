@@ -23,6 +23,10 @@ observed_ms and low_ms are merged relative millisecond ranges. The complement of
 - raw_rows_json_bytes reports the equivalent compact-serialized raw measurement array for the returned rows. Compare it against the actual response text length, not the file size or model usage.
 - MCP returns one TextContent JSON string, not both text and structured copies.
 - Use analyze_target with the same revision/settings and cursor i for full detail, view_frame/view_video_segment for visual verification, or listen_video_segment for compatible audio hosts. Do not claim uninspected content was understood. For complete semantic analysis, the host may need many additional frames.
-- Budget limits response size, not decoder runtime. Up to three segments may have been scanned locally before a budget boundary; an unreturned segment will be revisited at the next cursor. No hidden persistent cache.
+- Budget limits response size, not decoder runtime. Up to three segments may have been scanned locally before a budget boundary; an unreturned segment will be revisited at the next cursor. A bounded process-local cache can reuse complete segments for five minutes (128 entries, 256 KiB serialized payloads); disable with SEA_SCAN_CACHE=off. Incomplete segments are retried. No persistent cache.
 
 CI compares the actual serialized compact response on a controlled real AVI fixture against its raw rows and exercises dense candidate pagination. This is not a real-world model token benchmark.
+
+## Lean MCP tool discovery
+
+Set SEA_MCP_PROFILE=video before starting SEA or use `sea setup --profile video` with the normal client/media-root arguments. The nine registered tools cover compact scanning, metadata, selected frames, audio and full detail. Full remains default; optional models, indexing and persistent writes are unavailable in the video profile. Restart the client after configuration changes. Tool-schema JSON size and model tokens are distinct.

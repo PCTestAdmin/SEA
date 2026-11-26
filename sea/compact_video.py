@@ -6,6 +6,8 @@ from .engine import resolve_media
 from .video_understanding import source, plan_page, source_revision
 from .video_perception import scan_page
 from .scene_index import visual_data, audio_data
+from .scan_cache import CACHE, enabled
+from . import __version__
 
 MIN_BUDGET=2048
 MAX_BUDGET=16000
@@ -93,30 +95,45 @@ def overview(path,cursor=0,segment_seconds=12,max_segments=3,sample_fps=4,
     raw_bytes=2
     # Each scan is bounded; do not send raw records or ask the host to echo them.
     pos=cursor
+    use_cache=enabled()
+    # Include the source revision and sampling settings, not output budget/page size.
+    # Permission and current revision have already been checked before any lookup.
+    def key(i):
+        return (__version__,rev,segment_seconds,sample_fps,i)
+    pending={}
     while pos<cursor+requested:
-        page=scan_page(p,segment_seconds,pos,min(3,cursor+requested-pos),sample_fps,rev)
-        rows=page['results']
-        if not rows:
-            raise RuntimeError('Expected a nonempty local scan page.')
-        budget_hit=False
-        for row in rows:
-            if row['index']!=pos:
+        cached=pending.pop(pos,None)
+        if cached is None and use_cache:
+            cached=CACHE.get(key(pos))
+        if cached is None:
+            count=min(3,cursor+requested-pos)
+            page=scan_page(p,segment_seconds,pos,count,sample_fps,rev)
+            rows=page['results']
+            if len(rows)!=count or any(row['index']!=pos+j for j,row in enumerate(rows)):
                 raise RuntimeError('Unexpected local scan cursor.')
-            compact=compact_row(row,sample_fps)
-            candidate_raw=raw_bytes+len(encode(row))+(1 if report['rows'] else 0)
-            next_cursor=pos+1 if pos+1<total else None
-            candidate={**report,'rows':report['rows']+[compact],
-                       'raw_rows_json_bytes':candidate_raw,'next_cursor':next_cursor}
-            if len(encode(candidate))>output_budget_bytes:
-                if not report['rows']:
-                    raise ValueError('Output budget too small for one segment; increase it.')
-                budget_hit=True
-                break
-            report=candidate
-            raw_bytes=candidate_raw
-            pos+=1
-        if budget_hit:
+            if source_revision(p)!=rev:
+                raise RuntimeError('Video changed during compact analysis.')
+            for row in rows:
+                value=[compact_row(row,sample_fps),len(encode(row))]
+                pending[row['index']]=value
+                # Never cache incomplete or unavailable measurements; a retry may recover.
+                if (use_cache and row['visual_status']=='sampled'
+                        and row['audio_status'] in ('measured','not_present')
+                        and row['preceding_boundary_status'] in ('observed','start_of_video')):
+                    CACHE.put(key(row['index']),value)
+            cached=pending.pop(pos)
+        compact,row_bytes=cached
+        candidate_raw=raw_bytes+row_bytes+(1 if report['rows'] else 0)
+        next_cursor=pos+1 if pos+1<total else None
+        candidate={**report,'rows':report['rows']+[compact],
+                   'raw_rows_json_bytes':candidate_raw,'next_cursor':next_cursor}
+        if len(encode(candidate))>output_budget_bytes:
+            if not report['rows']:
+                raise ValueError('Output budget too small for one segment; increase it.')
             break
+        report=candidate
+        raw_bytes=candidate_raw
+        pos+=1
     if source_revision(p)!=rev:
         raise RuntimeError('Video changed during compact analysis.')
     if len(encode(report))>output_budget_bytes:

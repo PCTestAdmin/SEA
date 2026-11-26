@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.26.0
+
+- Add a bounded, process-local LRU for complete compact video segments. Reuse across cursors, budgets and page sizes; key by engine version, source revision and sampling settings. Recheck authorization/revision, avoid caching incomplete segments, cap payload size and entry count, expire after five minutes and allow disabling. No persistent media storage.
+- Add explicit video MCP profile (nine registered tools, one prompt) and preview-first setup --profile video. Full remains default. Test actual SDK tool-schema bytes against full profile (<30% target), unavailable tools, cache reuse, invalidation, limits, expiry and setup safety. CI and actual LLM-token savings still require verification.
+
 ## 0.25.0
 
 - Add compact_video_overview (MCP) and compact-video (CLI): direct local measurement and projection, one compact text result, 2048–16000-byte JSON budget, bounded 1–6 segments, explicit cursor, all candidate cut ticks and independent audio coverage. No raw evidence round trips or duplicate structured output.

@@ -10,6 +10,7 @@ import stat
 import sys
 import tempfile
 from . import __version__
+from .profiles import PROFILES, profile_name
 
 
 def config_path(client: str) -> Path:
@@ -29,10 +30,13 @@ def media_root(value: str) -> Path:
     return p
 
 
-def entry(root: Path) -> dict:
+def entry(root: Path, profile='full') -> dict:
     # Keep the virtual-environment executable path; resolving symlinks can escape a venv.
-    return {'command': os.path.abspath(sys.executable), 'args': ['-m', 'sea.server'],
-            'env': {'SEA_MEDIA_ROOTS': str(root)}}
+    profile=profile_name(profile)
+    env={'SEA_MEDIA_ROOTS':str(root)}
+    if profile!='full':
+        env['SEA_MCP_PROFILE']=profile
+    return {'command': os.path.abspath(sys.executable), 'args': ['-m', 'sea.server'], 'env':env}
 
 
 def unique_object(pairs):
@@ -59,11 +63,11 @@ def read_config(path: Path):
     return raw, data, stat.S_IMODE(info.st_mode)
 
 
-def register(path: Path, root: Path, *, apply=False, replace=False) -> dict:
+def register(path: Path, root: Path, *, apply=False, replace=False, profile='full') -> dict:
     path = Path(os.path.abspath(path.expanduser()))
     raw, data, mode = read_config(path)
     servers = data.setdefault('mcpServers', {})
-    new = entry(root)
+    new = entry(root,profile)
     if servers.get('sea') == new:
         return {'status': 'unchanged', 'config': str(path), 'entry': new}
     if 'sea' in servers and not replace:
@@ -116,6 +120,7 @@ def main(argv=None):
     setup.add_argument('--client', choices=['claude-desktop', 'cursor'], default='claude-desktop')
     setup.add_argument('--config', type=Path, help='Explicit JSON config path for compatible clients')
     setup.add_argument('--media-root', required=True, help='Existing dedicated media folder')
+    setup.add_argument('--profile',choices=PROFILES,default='full',help='MCP tools: full or lean video')
     setup.add_argument('--apply', action='store_true', help='Authorize writing the previewed config')
     setup.add_argument('--replace', action='store_true', help='Authorize replacing a different SEA entry')
     check = sub.add_parser('doctor', help='Check local prerequisites without modifying anything')
@@ -208,7 +213,7 @@ def main(argv=None):
         if args.action == 'doctor':
             result = doctor(root)
         else:
-            result = register(args.config or config_path(args.client), root, apply=args.apply, replace=args.replace)
+            result = register(args.config or config_path(args.client), root, apply=args.apply, replace=args.replace, profile=args.profile)
         print(json.dumps(result, indent=2))
         if result.get('status') == 'preview':
             print('No files changed. Repeat with --apply to register SEA.', file=sys.stderr)

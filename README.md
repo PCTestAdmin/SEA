@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.25.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.26.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -292,6 +292,18 @@ sea relate-video-events page0.json page1.json --limit 50
 Or call MCP `relate_video_events` with 1–16 v0.22 analysis envelopes; follow `next_offset`. No new model or dependencies. The host must inspect the actual media and reason about meaning.
 
 [Event relations guide](docs/event-relations.md)
+
+### New in v0.26 — Lean MCP profile and local scan reuse
+
+For video-focused agents, configure the optional `SEA_MCP_PROFILE=video` environment setting or preview setup with:
+
+```bash
+sea setup --client claude-desktop --media-root "/absolute/path/to/media" --profile video
+```
+
+Apply after reviewing the preview; an existing different entry requires explicit `--replace`. Restart the client. The video profile registers only nine core tools and one video prompt; full remains the default for compatibility. It does not register persistent writes or optional-model tools. The SDK integration test targets less than 30% of the full tool-schema JSON size, not a measured token count.
+
+Repeated compact video scans now reuse complete segment measurements in a bounded, process-local LRU (128 entries, 256 KiB serialized payloads, five-minute TTL). No files or raw media are cached. Source revision and sampling settings are checked; incomplete segments are not cached. Disable with `SEA_SCAN_CACHE=off`. The cache saves repeated decoding within a running MCP process, not across separate CLI invocations.
 
 ### New in v0.25 — Low-token video workflow
 

@@ -24,7 +24,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
             evidence_dir.mkdir()
             index_dir=Path(tmp)/'index'
             index_dir.mkdir()
-            env=dict(os.environ,SEA_MEDIA_ROOTS=tmp,SEA_MEMORY_DIR=str(memory_dir),SEA_VISION_WEIGHTS='',SEA_OPEN_VISION_DIR='',SEA_EVIDENCE_DIR=str(evidence_dir),SEA_INDEX_DIR=str(index_dir))
+            env=dict(os.environ,SEA_MCP_PROFILE='full',SEA_MEDIA_ROOTS=tmp,SEA_MEMORY_DIR=str(memory_dir),SEA_VISION_WEIGHTS='',SEA_OPEN_VISION_DIR='',SEA_EVIDENCE_DIR=str(evidence_dir),SEA_INDEX_DIR=str(index_dir))
             params=StdioServerParameters(command=sys.executable,args=['-m','sea.server'],env=env)
             async with stdio_client(params) as (reader,writer):
                 async with ClientSession(reader,writer) as session:
@@ -224,3 +224,28 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     self.assertFalse(result.isError)
                     result=await session.call_tool('delete_video_index',{'source_revision':revision,'confirm':True})
                     self.assertFalse(result.isError)
+
+    async def test_video_profile(self):
+        from mcp import ClientSession, StdioServerParameters
+        from mcp.client.stdio import stdio_client
+        async def inspect(profile):
+            with tempfile.TemporaryDirectory() as tmp:
+                env=dict(os.environ,SEA_MEDIA_ROOTS=tmp,SEA_MCP_PROFILE=profile)
+                params=StdioServerParameters(command=sys.executable,args=['-m','sea.server'],env=env)
+                async with stdio_client(params) as (reader,writer):
+                    async with ClientSession(reader,writer) as session:
+                        await session.initialize()
+                        tools=(await session.list_tools()).tools
+                        payload=json.dumps([t.model_dump(mode='json') for t in tools],separators=(',',':'))
+                        if profile=='video':
+                            self.assertEqual({t.name for t in tools},
+                                {'inspect_media','compact_video_overview','view_frame','view_video_segment',
+                                 'read_video_frames','view_video_frame_region','listen_video_segment',
+                                 'sense_audio','analyze_target'})
+                            self.assertEqual({p.name for p in (await session.list_prompts()).prompts},{'understand_video'})
+                            rejected=await session.call_tool('delete_video_index',{'source_revision':'unused'})
+                            self.assertTrue(rejected.isError)
+                        return len(payload.encode('utf-8'))
+        full=await inspect('full')
+        lean=await inspect('video')
+        self.assertLess(lean,.30*full)

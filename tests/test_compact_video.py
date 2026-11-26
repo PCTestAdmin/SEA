@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import patch
 from sea.compact_video import compact_row,encode,overview
 from sea.video_perception import scan_page
+from sea.scan_cache import CACHE, ScanCache
 
 
 class CompactVideoTests(unittest.TestCase):
@@ -18,6 +19,10 @@ class CompactVideoTests(unittest.TestCase):
         cls.root=Path(tmp.name).resolve()
         cls.p=cls.root/'demo.avi'
         subprocess.run([sys.executable,str(Path(__file__).resolve().parents[1]/'examples'/'make_demo.py'),str(cls.p)],check=True,timeout=30)
+
+    def setUp(self):
+        CACHE.clear()
+        self.addCleanup(CACHE.clear)
 
     def test_real_clip_size_and_equivalence(self):
         with patch.dict(os.environ,{'SEA_MEDIA_ROOTS':str(self.root)}):
@@ -88,6 +93,52 @@ class CompactVideoTests(unittest.TestCase):
         r=compact_row({**base,'audio_status':'not_present'},4)
         self.assertEqual(r['a'],'not_present')
         self.assertNotIn('observed_ms',r)
+
+    def test_cache_reuses_segments_and_respects_revision(self):
+        with patch.dict(os.environ,{'SEA_MEDIA_ROOTS':str(self.root),'SEA_SCAN_CACHE':'on'}):
+            with patch('sea.compact_video.scan_page',wraps=scan_page) as scans:
+                first=overview(str(self.p),segment_seconds=4,max_segments=2)
+                self.assertEqual(scans.call_count,1)
+                again=overview(str(self.p),segment_seconds=4,max_segments=2,output_budget_bytes=4000)
+                self.assertEqual(first,again)
+                self.assertEqual(scans.call_count,1)
+                second=overview(str(self.p),cursor=1,segment_seconds=4,max_segments=1)
+                self.assertEqual(second['rows'],first['rows'][1:])
+                self.assertEqual(scans.call_count,1)
+                overview(str(self.p),segment_seconds=4,sample_fps=2)
+                self.assertEqual(scans.call_count,2)
+                with patch.dict(os.environ,{'SEA_SCAN_CACHE':'off'}):
+                    overview(str(self.p),segment_seconds=4)
+                self.assertEqual(scans.call_count,3)
+                # Change mtime without changing valid media bytes.
+                st=self.p.stat()
+                os.utime(self.p,ns=(st.st_atime_ns,st.st_mtime_ns+2000000000))
+                try:
+                    with self.assertRaises(ValueError):
+                        overview(str(self.p),segment_seconds=4,expected_revision=first['source_revision'])
+                    new=overview(str(self.p),segment_seconds=4)
+                    self.assertNotEqual(first['source_revision'],new['source_revision'])
+                    self.assertEqual(scans.call_count,4)
+                finally:
+                    os.utime(self.p,ns=(st.st_atime_ns,st.st_mtime_ns))
+
+    def test_cache_limits_ttl_and_copy(self):
+        now=[0.]
+        c=ScanCache(max_entries=2,max_bytes=64,ttl=5,clock=lambda:now[0])
+        c.put('a',[1])
+        c.put('b',[2])
+        value=c.get('a')
+        value.append(9)
+        self.assertEqual(c.get('a'),[1])
+        c.put('c',[3])
+        self.assertIsNone(c.get('b'))
+        self.assertEqual(c.get('a'),[1])
+        c.put('large',['x'*100])
+        self.assertIsNone(c.get('large'))
+        self.assertLessEqual(c.size,64)
+        now[0]=5.
+        self.assertIsNone(c.get('a'))
+        self.assertEqual(c.size,0)
 
     def test_cli(self):
         with patch.dict(os.environ,{'SEA_MEDIA_ROOTS':str(self.root)}):
