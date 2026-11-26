@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.23.1
+
+- Address the v0.23.0 Windows MP4 fixture encoding timeout and macOS missing scene-candidate failure by replacing AVI transcoding with bounded direct RGB/WAV encoding (MPEG-4/AAC), explicit stream mapping, single-threaded encoders, intra frames and disabled stdin.
+- Strengthen MP4 assertions to require both complete segment measurements, exact sample counts, boundary coverage, both known scene changes and nearby audio transitions. Failures now include segment diagnostics; no tests skipped or thresholds relaxed.
+- Update fixture documentation. The raw-input encoding and segment decoding were checked locally with FFmpeg 7.1.5; cross-platform CI and the exact cause of the prior macOS missing candidates remain to be verified.
+
 ## 0.23.0
 
 - Add offline paired Reality Benchmark CLI: freeze hashed MP4 suites, generate answer-free packets and run templates, score matched model runs with accuracy, gains/regressions, abstentions, per-category and real/synthetic breakdowns and runtime.

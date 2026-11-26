@@ -41,11 +41,10 @@ The scorer requires both full sets of answers, matching suite hashes, matching m
 ## 4. Controlled smoke test (not a real-world benchmark)
 
 ```bash
-python examples/make_demo.py demo.avi
-ffmpeg -i demo.avi -c:v mpeg4 -pix_fmt yuv420p -c:a aac demo.mp4
+python examples/make_mp4_demo.py demo.mp4
 sea-benchmark prepare benchmarks/smoke_spec.json . ./smoke-frozen
 ```
 
-The smoke spec asks about the black/white/black scene, sound and transitions. CI tests convert the generated AVI into actual MP4, decode it with SEA and exercise packet generation, scoring, error cases and CLI. Mock answer values in unit tests are only test inputs, never measured model results.
+The smoke spec asks about the black/white/black scene, sound and transitions. CI generates an actual MPEG-4/AAC MP4 directly from 24 raw RGB frames and exactly 96000 PCM samples, using explicit stream maps, single-threaded encoders, intra frames, a six-second output limit and no interactive stdin. Tests require complete audio and visual coverage, both scene changes and both nearby audio transitions, and exercise packet generation, scoring, error cases and CLI. Mock answer values in unit tests are only test inputs, never measured model results.
 
 No new mandatory dependency. The initial benchmark is multiple-choice video QA; free-form narrative quality, precise temporal localization and long-video generalization remain follow-up evaluation tasks.

@@ -5,7 +5,7 @@
       "id": "demo01",
       "file": "demo.mp4",
       "source_kind": "synthetic",
-      "source": "SEA examples/make_demo.py, transcoded to MP4",
+      "source": "SEA examples/make_mp4_demo.py, bounded raw RGB and WAV encoded to MP4",
       "questions": [
         {
           "id": "q01",

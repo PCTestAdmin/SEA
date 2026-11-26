@@ -2,14 +2,14 @@ import copy
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 from sea import benchmark as b
-from sea.analysis import analyze_target
+from sea.analysis import analyze_target,audit_video_coverage
+from sea.engine import probe
 from sea.event_relations import relate
 
 
@@ -22,11 +22,11 @@ class BenchmarkTests(unittest.TestCase):
         tmp=tempfile.TemporaryDirectory()
         cls.addClassCleanup(tmp.cleanup)
         cls.root=Path(tmp.name).resolve()
-        avi=cls.root/'demo.avi'
         mp4=cls.root/'demo.mp4'
-        subprocess.run([sys.executable,str(ROOT/'examples'/'make_demo.py'),str(avi)],check=True,timeout=30)
-        subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-i',str(avi),'-c:v','mpeg4',
-                        '-pix_fmt','yuv420p','-c:a','aac',str(mp4)],check=True,timeout=30)
+        proc=subprocess.run([sys.executable,str(ROOT/'examples'/'make_mp4_demo.py'),str(mp4)],
+                            stdin=subprocess.DEVNULL,capture_output=True,text=True,timeout=105)
+        if proc.returncode:
+            raise RuntimeError('MP4 fixture generation failed: '+proc.stderr[-5000:])
         cls.spec=b.load(ROOT/'benchmarks'/'smoke_spec.json')
         cls.suite,cls.key=b.prepare(cls.spec,cls.root)
         cls.protocol={'pair_id':'unit-test','model':'fake-test-model','host':'test-host','settings':'fixed',
@@ -84,11 +84,28 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(r['assisted_clips_without_sea_calls'],['demo01'])
 
     def test_real_mp4_decode_smoke(self):
+        path=self.root/'demo.mp4'
+        meta=probe(path)
+        self.assertTrue(meta['video'] and meta['audio'],meta)
+        self.assertAlmostEqual(meta['duration_s'],6,places=3,msg=str(meta))
+        self.assertEqual({s['codec_name'] for s in meta['streams']},{'mpeg4','aac'})
         with patch.dict(os.environ,{'SEA_MEDIA_ROOTS':str(self.root)}):
-            page=analyze_target(str(self.root/'demo.mp4'),segment_seconds=4,page_size=2)
+            page=analyze_target(str(path),segment_seconds=4,page_size=2)
+        rows=page['record']['normalized_result']['results']
+        diagnostic=json.dumps(rows,ensure_ascii=True)
+        self.assertEqual(len(rows),2,diagnostic)
+        self.assertEqual([row['visual_status'] for row in rows],['sampled','sampled'],diagnostic)
+        self.assertEqual([row['audio_status'] for row in rows],['measured','measured'],diagnostic)
+        self.assertEqual([row['sample_count'] for row in rows],[16,8],diagnostic)
+        self.assertEqual(rows[1]['preceding_boundary_status'],'observed',diagnostic)
+        self.assertTrue(audit_video_coverage([page])['all_sampled_measurements_reported_complete'],diagnostic)
         r=relate([page])
         self.assertEqual(r['missing_ranges'],[])
-        self.assertTrue(any(e['kind']=='scene_change_candidate' for e in r['events']))
+        self.assertEqual(r['skipped_segments'],[])
+        cuts=[e for e in r['events'] if e['kind']=='scene_change_candidate']
+        self.assertEqual([e['time_s'] for e in cuts],[2.,4.],json.dumps(r))
+        self.assertTrue(all(any(link['kind']=='near_audio_transition' for link in e['relations'])
+                            for e in cuts),json.dumps(r))
 
     def test_cli(self):
         out=self.root/'frozen'
