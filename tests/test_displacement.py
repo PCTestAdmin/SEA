@@ -1,11 +1,13 @@
 import os
 from pathlib import Path
 import tempfile
+import sys
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 import numpy as np
 from PIL import Image
-from sea.displacement import grid,normalize,status,measure,draw_vectors
+from sea.displacement import grid,normalize,status,measure,draw_vectors,native
 
 class DisplacementTests(unittest.TestCase):
     def test_grid(self):
@@ -15,6 +17,23 @@ class DisplacementTests(unittest.TestCase):
         self.assertEqual(int(x[0,1]-x[0,0]),32)
         for args in ((100,100,12),(512,512,25),(512,512,5)):
             with self.assertRaises(ValueError):grid(*args)
+
+    def test_native_small_grid_configuration(self):
+        class FakeProvider:
+            def runAutorift(self):
+                # Check adapter configuration, not numerical provider correctness.
+                if self.sparseSearchSampleRate != 1:
+                    raise AssertionError('Small grid would be undersampled.')
+                self.Dx=np.zeros(self.xGrid.shape,dtype=np.float32)
+                self.Dy=np.zeros_like(self.Dx)
+                self.ChipSizeX=np.full_like(self.Dx,32)
+                self.InterpMask=np.zeros(self.xGrid.shape,dtype=bool)
+        a=np.zeros((512,512),dtype=np.uint8)
+        with patch('sea.displacement.status',return_value={'ready_to_attempt':True}), \
+             patch.dict(sys.modules,{'autoRIFT':SimpleNamespace(autoRIFT=FakeProvider)}):
+            report=native(a,a,12)
+        self.assertEqual(report['grid_shape'],[14,14])
+        self.assertEqual(report['matched_count'],196)
 
     def test_masks(self):
         x=np.array([[40,72,104,136]])
@@ -49,7 +68,8 @@ class DisplacementTests(unittest.TestCase):
             shifted=np.roll(img,(3,5),axis=(0,1))
             Image.fromarray(img).save(a);Image.fromarray(shifted).save(b)
             r,rgb=measure(a,b,12)
-            self.assertGreater(r['matched_count'],10,r)
+            self.assertEqual(r['coarse_search_stride'],1)
+            self.assertGreater(r['matched_count'],10,{k:v for k,v in r.items() if k!='points'})
             # Check displacement magnitude independently of native source-order sign convention.
             self.assertAlmostEqual(abs(r['median_matched_dx_px']),5,delta=.5)
             self.assertAlmostEqual(abs(r['median_matched_dy_px']),3,delta=.5)

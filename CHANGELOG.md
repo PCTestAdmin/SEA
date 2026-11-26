@@ -2,6 +2,8 @@
 
 ## 0.18.0
 
+- Fix autoRIFT small-grid configuration: use coarse search stride 1 rather than the large-scene default of 4, preserving upstream consistency filtering and the original native accuracy assertions. Add adapter configuration regression coverage.
+
 - Opt-in reusable SQLite temporal index of decoded frame ordinals, best-effort PTS ticks, relative timestamps and keyframe flags.
 - Indexed nearest-time and ordinal lookup, paginated metadata and searchable host-authored observation notes.
 - Explicit save/delete consent, source revision checks, bounded storage and no raw frames or model inference.

@@ -19,6 +19,7 @@ VERSION='2.1.1'
 MAX_SIDE=768
 CHIP=32
 STEP=32
+COARSE_SAMPLE_RATE=1
 MAX_OUTPUT=512*1024
 
 
@@ -92,6 +93,13 @@ def native(a,b,search):
     obj.SearchLimitY=search
     obj.MultiThread=0
     obj.OverSampleRatio=16
+    # autoRIFT's default coarse stride of four is intended for large grids.
+    # On SEA's 14x14 fixture it creates a 3x3 coarse grid. The upstream
+    # 5x5 neighborhood filter still requires eight agreeing samples,
+    # eliminating edge cells and then the remaining center on iteration 2.
+    # Use the full bounded grid for coarse matching; keep all upstream
+    # consistency thresholds, iterations and fine subpixel filtering intact.
+    obj.sparseSearchSampleRate=COARSE_SAMPLE_RATE
     obj.runAutorift()
     return normalize(x,y,obj.Dx,obj.Dy,obj.ChipSizeX,obj.InterpMask,search)
 
@@ -138,7 +146,7 @@ def measure(a_path:Path,b_path:Path,search:int=12):
         raise RuntimeError('Source changed during displacement analysis.')
     return {'provider':'NASA JPL autoRIFT','provider_version':VERSION,'a':a_path.name,'b':b_path.name,
             'source_size_px':sa,'sample_size_px':[w,h],'search_radius_px':search,
-            'chip_size_px':CHIP,'grid_spacing_px':STEP,**result,
+            'chip_size_px':CHIP,'grid_spacing_px':STEP,'coarse_search_stride':COARSE_SAMPLE_RATE,**result,
             'limitations':['Raw autoRIFT displacement convention: Cartesian y is positive upward, grid rows increase downward.',
                            'Vectors are sampled-image pixels, not meters or velocities. Direction convention should be checked with a known reference pair.',
                            'Fixed single chip size, grayscale, no georeferencing, automatic alignment or orthorectification.',
