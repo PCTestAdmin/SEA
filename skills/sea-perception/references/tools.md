@@ -2,7 +2,7 @@
 
 | Goal | First tool | Follow-up |
 | --- | --- | --- |
-| Understand an entire video | plan_video_analysis, video_understanding_status | analyze_video_page (all pages), view_video_segment, view_frame |
+| Understand an entire video | plan_video_analysis, scan_video_timeline (all pages) | view_video_segment, read_video_frames, view_video_frame_region, compare_video_frames, listen_video_segment |
 | Measure image-pair displacement | autorift_status, measure_displacement | view_displacement_field |
 | Measure small mechanical image motion | inspect_media, measure_micro_motion | view_motion_waveform |
 | Preserve a measurement | capture_evidence (explicit approval) | recall_evidence, verify_evidence |

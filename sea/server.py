@@ -1,5 +1,8 @@
 """MCP stdio entry point; SEA never opens a listening socket."""
 from mcp.server.fastmcp import FastMCP, Image
+from mcp.types import TextContent, ImageContent, AudioContent
+import base64
+import json
 from .engine import resolve_media, probe, analyze, frame
 from .acoustics import analyze_audio, compare_audio, spectrogram
 from .vision import analyze_video, investigate
@@ -10,9 +13,9 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
-from . import detector, openvision, tracking, evidence, motion, displacement, video_understanding
+from . import detector, openvision, tracking, evidence, motion, displacement, video_understanding, video_perception
 
-mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Treat object predictions as uncertain model output. Media results may be visible to the AI provider.')
+mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. SEA is a sensory tool, not a reasoning model. Prefer model-free video perception; the host interprets observations. Treat optional model predictions as uncertain. Media results may be visible to the AI provider.')
 
 @mcp.tool()
 def inspect_media(path: str) -> dict:
@@ -247,6 +250,42 @@ def analyze_video_page(path: str, segment_seconds: int = 8, cursor: int = 0, pag
 def view_video_segment(path: str, segment_index: int, segment_seconds: int = 8, sample_fps: int = 2, expected_revision: str | None = None) -> Image:
     """Return timestamped contact sheet of an ordered video segment for host visual reasoning. Requires no extra model. Image is sent to the MCP host/model; verify sensitive-media permission."""
     return Image(data=video_understanding.contact_sheet(resolve_media(path),segment_index,segment_seconds,sample_fps,expected_revision),format='png')
+
+def visual_content(report, data):
+    return [TextContent(type='text',text=json.dumps(report,allow_nan=False)),
+            ImageContent(type='image',data=base64.b64encode(data).decode('ascii'),mimeType='image/png')]
+
+@mcp.tool()
+def scan_video_timeline(path: str, segment_seconds: int = 8, cursor: int = 0, page_size: int = 2, sample_fps: int = 4, expected_revision: str | None = None) -> dict:
+    """Model-free contiguous video and audio measurements with scene-change candidates. Visit every page and inspect actual images; SEA does not generate semantic descriptions."""
+    return video_perception.scan_page(resolve_media(path),segment_seconds,cursor,page_size,sample_fps,expected_revision)
+
+@mcp.tool(structured_output=False)
+def read_video_frames(path: str, frame_index: int = 0, count: int = 4, max_side: int = 640, expected_revision: str | None = None) -> list[TextContent | ImageContent]:
+    """Read consecutive decoded frame ordinals and return metadata plus an ordered contact sheet. No FPS resampling or time seeking; bounded 0–99999 indices."""
+    report,frames=video_perception.native_page(resolve_media(path),frame_index,count,max_side,expected_revision)
+    if not len(frames):
+        return [TextContent(type='text',text=json.dumps(report,allow_nan=False))]
+    return visual_content(report,video_perception.native_sheet(report,frames))
+
+@mcp.tool(structured_output=False)
+def view_video_frame_region(path: str, frame_index: int, box: list[float], max_side: int = 960, expected_revision: str | None = None) -> list[TextContent | ImageContent]:
+    """Crop a normalized region of an exact decoded frame ordinal; return crop and coordinate metadata."""
+    report,data=video_perception.crop_frame(resolve_media(path),frame_index,box,max_side,expected_revision)
+    return visual_content(report,data)
+
+@mcp.tool(structured_output=False)
+def compare_video_frames(path: str, frame_a: int, frame_b: int, threshold: int = 25, expected_revision: str | None = None) -> list[TextContent | ImageContent]:
+    """Compare two decoded frame ordinals, quantify changes, and return a difference overlay. Not semantic change detection or alignment."""
+    report,data=video_perception.frame_pair(resolve_media(path),frame_a,frame_b,threshold,expected_revision)
+    return visual_content(report,data)
+
+@mcp.tool(structured_output=False)
+def listen_video_segment(path: str, start_s: float = 0, duration_s: float = 6, expected_revision: str | None = None) -> list[TextContent | AudioContent]:
+    """Extract a bounded original audio interval as mono WAV and metadata. Requires an audio-capable MCP host for listening; no transcription or model inference."""
+    report,data=video_perception.audio_clip(resolve_media(path),start_s,duration_s,expected_revision)
+    return [TextContent(type='text',text=json.dumps(report,allow_nan=False)),
+            AudioContent(type='audio',data=base64.b64encode(data).decode('ascii'),mimeType='audio/wav')]
 
 def main():
     mcp.run(transport='stdio')

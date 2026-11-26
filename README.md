@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.16.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.17.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -231,18 +231,18 @@ Use the optional official autoRIFT 2.1.1 package to estimate local displacement 
 
 [Installation and limitations](docs/displacement.md) · [Upstream NASA JPL project](https://github.com/nasa-jpl/autoRIFT)
 
-### New in v0.16 — Video Understanding
+### New in v0.17 — Universal Video Perception
 
-**Give your agent an entire MP4, not just one frame.** Plan contiguous segments from start to finish, inspect timestamped contact sheets or use optional local Qwen2.5-VL video descriptions and Faster-Whisper speech transcripts. Follow every page and use the ordered observations to explain what happened. Short events may still be missed at the chosen frame sampling rate.
+**Your AI reasons. SEA provides the senses.** No extra AI model, API key or model weights are needed for the core video workflow. Navigate an entire MP4 in contiguous timed segments, inspect actual ordered frames, compare exact decoded frame ordinals, crop details, measure visual and audio changes, and return original audio excerpts as MCP WAV content.
 
 ```text
-Analyze this MP4 from beginning to end with SEA.
-Visit every segment, describe visible actions and spoken content,
-then explain the sequence and relationships with timestamps.
-Report failed segments or missing evidence instead of guessing.
+Use SEA to examine my entire MP4 from beginning to end.
+Visit every timeline page and inspect ordered frame evidence.
+Investigate important details, listen where supported, then explain
+what happened and how events relate, citing the times and evidence.
 ```
 
-[Video Understanding setup and workflow](docs/video-understanding.md)
+[Universal Video Perception](docs/video-perception.md) · [Optional legacy model providers](docs/video-understanding.md)
 
 ## What could you use SEA for?
 
@@ -323,6 +323,11 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `plan_video_analysis` | Contiguous whole-file segment plan, paginated |
 | `analyze_video_page` | Local clip descriptions and timed speech transcripts |
 | `view_video_segment` | Timestamped ordered frame sheet for host vision |
+| `scan_video_timeline` | Model-free contiguous visual/audio measurements and scene candidates |
+| `read_video_frames` | Consecutive decoded frame ordinals and contact sheet |
+| `view_video_frame_region` | Crop an exact decoded frame ordinal |
+| `compare_video_frames` | Compare exact frame ordinals and show changes |
+| `listen_video_segment` | Bounded WAV audio content for compatible hosts |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -369,7 +374,8 @@ See [installation and usage details](docs/installation.md).
 - [x] Opt-in content-addressed evidence reports for selected analyzers
 - [x] Experimental small-motion measurement and waveform
 - [x] Optional autoRIFT adapter (native verification tracked in CI)
-- [x] Whole-file chronological video planning, visual evidence pages and optional semantic providers (model verification pending)
+- [x] Model-free whole-file timeline, frame navigation, audio content and visual evidence
+- [x] Optional legacy semantic provider interfaces (model verification pending)
 - [ ] One-click desktop extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
@@ -424,7 +430,8 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
-| [Video Understanding](docs/video-understanding.md) | Sequential clip descriptions, speech and host synthesis |
+| [Universal Video Perception](docs/video-perception.md) | Model-free timeline, exact frame ordinals, audio and visual evidence |
+| [Optional model providers](docs/video-understanding.md) | Legacy opt-in descriptions and speech |
 | [Precision Displacement](docs/displacement.md) | Optional NASA JPL autoRIFT provider |
 | [Micro-Motion](docs/micro-motion.md) | Mechanical motion measurement and reproducible fixture |
 | [Evidence system](docs/evidence.md) | Content-addressed reports and source verification |

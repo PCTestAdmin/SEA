@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.17.0
+
+- Restore model-free perception as the primary video workflow; existing optional model adapters remain for compatibility.
+- Contiguous timeline measurements with candidate scene changes and cross-page boundary comparisons.
+- Exact decoded frame ordinals, ordered sheets, regional crops and frame difference overlays.
+- Original audio excerpts as MCP WAV content for compatible hosts.
+- Five core tests and real MCP round-trip coverage. No new required dependencies or model weights.
+
 ## 0.16.0
 
 - Chronological whole-file video segment planning and paginated analysis, with explicit failed segment states and revision checks.

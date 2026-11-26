@@ -1,4 +1,6 @@
-# Video Understanding (experimental)
+# Optional legacy video model providers (experimental)
+
+The default SEA workflow as of v0.17 is [model-free Universal Video Perception](video-perception.md). This page documents older optional model adapters for compatibility; they are not required or recommended for the core workflow.
 
 SEA now supports a chronological workflow for MP4 and other supported video files. Unlike the older sparse recording survey, the plan has contiguous segments from time zero to the known file duration (max 24 hours and the existing 2 GiB file limit). The agent must actually visit each segment. Coverage of the time range is not coverage of every original frame, and no model can guarantee complete interpretation.
 
