@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.8.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.9.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -98,15 +98,15 @@ Our reproducible six-second fixture contains a black scene, a white scene with a
 | Sampled video frames | 24 |
 | Overall digital RMS level | −18.09 dBFS |
 
-These are measurements from the synthetic test, not a live AI screenshot or a real-world benchmark. The illustration shows the reported tone and the known fixture scenes. Temporal overlap does not establish causation.
+These are historical measurements from the original MP4 synthetic test, not a live AI screenshot or a real-world benchmark. The illustration shows the reported tone and the known fixture scenes. Temporal overlap does not establish causation.
 
 **Reproduce it yourself** — generate the fixture and ask your agent to inspect it:
 
 ```bash
-python examples/make_demo.py /absolute/path/to/media/demo.mp4
+python examples/make_demo.py /absolute/path/to/media/demo.avi
 ```
 
-[Demo generator](examples/make_demo.py) · [Recorded JSON evidence](examples/demo-report.json) · [Test assertions](tests/test_engine.py)
+[Demo generator](examples/make_demo.py) · [Original MP4 JSON evidence](examples/demo-report.json) · [Test assertions](tests/test_engine.py)
 
 ### Acoustic evidence
 
@@ -152,7 +152,7 @@ parts were not analyzed. Separate observations from hypotheses.
 
 [Autonomous survey guide](docs/survey.md) · [Survey tests](tests/test_survey.py)
 
-### New in v0.8 — perception memory
+### Perception memory
 
 Save an audio or sensor baseline explicitly and compare future measurements even after restarting the agent. Memory is disabled by default. Only numeric summaries and user-selected labels are saved; no raw recordings or source paths.
 
@@ -163,6 +163,18 @@ the measured differences without guessing the cause.
 ```
 
 [Enable and use perception memory](docs/memory.md)
+
+### New in v0.9 — screenshot intelligence and agent skill
+
+Read visible text with optional local Tesseract, locate changed screenshot regions, visualize pixel differences, or locate a known same-scale icon using template matching. These are not semantic object labels.
+
+Install the official free Agent Skill separately:
+
+```bash
+npx skills add PCTestAdmin/SEA --skill sea-perception
+```
+
+Requires Node.js for the skill installer. The skill does not install the MCP server; follow Quick start first. [Skill source](skills/sea-perception/SKILL.md) · [Image guide](docs/images.md)
 
 ## What could you use SEA for?
 
@@ -216,6 +228,11 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `recall_perception` | Retrieve historical evidence |
 | `compare_perception` | Compare compatible saved summaries |
 | `forget_perception` | Explicitly delete one saved record |
+| `read_image_text` | OCR words, confidence and normalized boxes |
+| `compare_images` | Measured screenshot differences and changed regions |
+| `view_image_difference` | PNG overlay highlighting changed pixels |
+| `find_image_template` | Single-scale grayscale template localization |
+| `guided_workflows` | Read-only agent workflow discovery |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -223,7 +240,7 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | Input / parameter | Current support |
 | :--- | :--- |
 | Audio | WAV, MP3, FLAC, M4A, OGG, OPUS |
-| Video | MP4, MOV, MKV, WebM |
+| Video | MP4, MOV, MKV, WebM, AVI |
 | Still images | PNG, JPEG (spatial tools only) |
 | Sensor logs | Numeric UTF-8 CSV, up to 2 MiB / 20,000 rows |
 | Maximum file size | 2 GiB |
@@ -254,7 +271,9 @@ See [installation and usage details](docs/installation.md).
 - [x] Reproducible audiovisual example
 - [x] Preview-first client registration, backups and prerequisite checks
 - [ ] Verified client integration and cross-platform installation
-- [ ] One-click extension / package distribution
+- [x] Official Agent Skill and guided workflow discovery
+- [x] Screenshot OCR, pixel differences and template localization
+- [ ] One-click desktop extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
 - [x] Evidence-indexed multimodal investigation and sampled visual change regions
@@ -308,6 +327,8 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Screenshot intelligence](docs/images.md) | OCR, visual comparison and templates |
+| [Agent Skill](skills/sea-perception/SKILL.md) | Agent instructions and workflows |
 | [Perception memory](docs/memory.md) | Opt-in SQLite baseline history and comparison |
 | [Autonomous survey](docs/survey.md) | Sampling plan, ranking, refinement and coverage |
 | [Sensor signals](docs/signals.md) | CSV schema, thresholds and paired-channel analysis |

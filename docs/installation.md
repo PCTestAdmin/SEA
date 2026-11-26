@@ -71,7 +71,7 @@ In Claude Desktop, open the local MCP config (Settings > Developer > Edit Config
 }
 ```
 
-Restart the MCP client and verify that SEA exposes eighteen tools, including perception memory. Memory operations require optional setup described in [memory.md](memory.md). See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
+Restart the MCP client and verify that SEA exposes 23 tools, including screenshot intelligence and perception memory. Memory operations require optional setup described in [memory.md](memory.md). See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
 
 ## Command-line usage
 
@@ -79,17 +79,21 @@ From the SEA source folder (or any directory after installation):
 
 ```sh
 export SEA_MEDIA_ROOTS=/absolute/path/to/media
-python -m sea.cli /absolute/path/to/media/demo.mp4 --duration 6
+python -m sea.cli /absolute/path/to/media/demo.avi --duration 6
 ```
 
 PowerShell:
 
 ```powershell
 $env:SEA_MEDIA_ROOTS = 'C:\Users\YOU\SEA-Media'
-python -m sea.cli 'C:\Users\YOU\SEA-Media\demo.mp4' --duration 6
+python -m sea.cli 'C:\Users\YOU\SEA-Media\demo.avi' --duration 6
 ```
 
-Generate a synthetic fixture using `python examples/make_demo.py /absolute/path/to/media/demo.mp4`. It refuses to overwrite an existing output. The source generator uses FFmpeg.
+Generate a synthetic fixture using `python examples/make_demo.py /absolute/path/to/media/demo.avi`. It refuses to overwrite an existing output. The source generator writes a finite AVI directly in Python.
+
+## Install the official Agent Skill
+
+With Node.js installed, run `npx skills add PCTestAdmin/SEA --skill sea-perception` and review the selected agent and installation destination. This installs guidance only; the separate MCP setup above remains necessary. See [skill source](../skills/sea-perception/SKILL.md). For OCR, install Tesseract and the desired language packs; see [image tools](images.md).
 
 ## Troubleshooting
 

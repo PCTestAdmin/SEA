@@ -26,7 +26,7 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception','read_image_text','compare_images','view_image_difference','find_image_template','guided_workflows'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -78,4 +78,11 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     result=await session.call_tool('recall_perception',{'record_id':record_id})
                     self.assertFalse(result.isError)
                     result=await session.call_tool('forget_perception',{'record_id':record_id,'confirm':True})
+                    self.assertFalse(result.isError)
+
+                    result=await session.call_tool('compare_images',{'path_a':str(still),'path_b':str(still)})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    self.assertEqual(data['changed_pixel_fraction'],0)
+                    result=await session.call_tool('guided_workflows',{})
                     self.assertFalse(result.isError)

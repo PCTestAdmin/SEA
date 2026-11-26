@@ -16,7 +16,7 @@ RATE = 16000
 FPS = 4
 WIDTH, HEIGHT = 160, 90
 FORMATS = {'.wav':'wav', '.mp3':'mp3', '.flac':'flac', '.mp4':'mov', '.mov':'mov',
-           '.m4a':'mov', '.mkv':'matroska', '.webm':'matroska', '.ogg':'ogg', '.opus':'ogg'}
+           '.m4a':'mov', '.mkv':'matroska', '.webm':'matroska', '.ogg':'ogg', '.opus':'ogg', '.avi':'avi'}
 
 
 IMAGE_FORMATS = {'.png':'png_pipe', '.jpg':'jpeg_pipe', '.jpeg':'jpeg_pipe'}

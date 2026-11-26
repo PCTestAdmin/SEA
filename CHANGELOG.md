@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0
+
+- Official free Agent Skill and read-only guided workflows.
+- Screenshot OCR with optional Tesseract, visual diff overlays and same-scale template matching.
+- Pillow still-image backend, AVI support and pure-Python test fixture; Windows CI selects actual FFmpeg binaries instead of Chocolatey shims.
+- Five screenshot tests and expanded MCP verification.
+
 ## 0.8.0
 
 - Opt-in local SQLite history for measured audio and sensor baselines.

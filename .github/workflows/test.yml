@@ -20,17 +20,26 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Install FFmpeg (Windows)
         if: runner.os == 'Windows'
-        run: choco install ffmpeg -y --no-progress
+        shell: pwsh
+        run: |
+          choco install ffmpeg -y --no-progress
+          $root = Join-Path $env:ChocolateyInstall 'lib\ffmpeg\tools'
+          $binary = Get-ChildItem $root -Filter ffmpeg.exe -Recurse | Where-Object { Test-Path (Join-Path $_.DirectoryName 'ffprobe.exe') } | Select-Object -First 1
+          if (-not $binary) { throw 'FFmpeg actual binaries not found' }
+          $binary.DirectoryName | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Install FFmpeg (macOS)
         if: runner.os == 'macOS'
         run: brew install ffmpeg
+      - name: Install optional OCR provider (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
       - run: ffmpeg -version
       - run: python -m pip install .
       - run: sea --version
       - run: sea doctor
       - run: python -c "import mcp; import sea.server"
       - name: Generate bounded demo fixture
-        run: python examples/make_demo.py ci-demo.mp4
+        run: python examples/make_demo.py ci-demo.avi
         timeout-minutes: 2
       - name: Run test suite
         run: python -m unittest discover -s tests -v
