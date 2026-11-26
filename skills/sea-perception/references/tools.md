@@ -2,6 +2,7 @@
 
 | Goal | First tool | Follow-up |
 | --- | --- | --- |
+| Find objects by text | open_vision_status, find_objects_by_text | view_text_matches |
 | Locate known object classes | vision_status, detect_objects | view_detections |
 | Read an error dialog | read_image_text | inspect_region |
 | Check a UI regression | compare_images | view_image_difference, OCR |

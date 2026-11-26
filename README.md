@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.10.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.11.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -176,7 +176,7 @@ npx skills add PCTestAdmin/SEA --skill sea-perception
 
 Requires Node.js for the skill installer. The skill does not install the MCP server; follow Quick start first. [Skill source](skills/sea-perception/SKILL.md) · [Image guide](docs/images.md)
 
-### New in v0.10 — Vision AI
+### Vision AI
 
 Optional local pretrained object detection for common COCO classes in photos and individual video frames. Receive labeled bounding boxes, model scores, model provenance and a visual overlay. No model is downloaded automatically.
 
@@ -186,6 +186,17 @@ and explain which predictions need human verification.
 ```
 
 [Enable Vision AI](docs/vision-ai.md) · [Detector tests](tests/test_detector.py)
+
+### New in v0.11 — Open Vision
+
+Find visual objects using short text descriptions instead of a fixed label catalog. Optional local OWLv2 returns ranked matches and normalized regions, with an annotated image for verification. English short descriptions work best. No automatic model downloads.
+
+```text
+Find a red cup, a computer mouse and a laptop in my photo.
+Show the matching regions and explain uncertain predictions.
+```
+
+[Open Vision setup](docs/open-vision.md) · [Tests](tests/test_openvision.py)
 
 ## What could you use SEA for?
 
@@ -247,6 +258,9 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `vision_status` | Optional detector readiness and checkpoint provenance |
 | `detect_objects` | COCO object predictions, scores and bounding boxes |
 | `view_detections` | Annotated image of model predictions |
+| `open_vision_status` | Local OWLv2 provider readiness |
+| `find_objects_by_text` | Text-conditioned object localization |
+| `view_text_matches` | Annotated text-search results |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -288,6 +302,7 @@ See [installation and usage details](docs/installation.md).
 - [x] Official Agent Skill and guided workflow discovery
 - [x] Screenshot OCR, pixel differences and template localization
 - [x] Optional local COCO object detector
+- [x] Optional text-conditioned OWLv2 detection
 - [ ] One-click desktop extension / package distribution
 - [ ] More precise timestamp alignment and labeled benchmarks
 - [x] Spectrograms, threshold-based audio event localization and recording comparisons
@@ -342,6 +357,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Open Vision](docs/open-vision.md) | Optional text-conditioned detection |
 | [Vision AI](docs/vision-ai.md) | Optional pretrained object detection and setup |
 | [Screenshot intelligence](docs/images.md) | OCR, visual comparison and templates |
 | [Agent Skill](skills/sea-perception/SKILL.md) | Agent instructions and workflows |

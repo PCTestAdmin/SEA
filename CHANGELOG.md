@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.0
+
+- Optional local OWLv2 text-conditioned object localization, annotated matches and readiness checks.
+- Bounded text queries, per-label overlap suppression, weight digest and explicit limitations.
+- Core and MCP tests; separate opt-in pretrained OWLv2 workflow.
+- Fix COCO fixture TLS failure using pinned Transformers test image; TLS verification remains enabled.
+
 ## 0.10.0
 
 - Optional offline Torchvision SSDLite COCO detector with explicit local checkpoint and verified official hash prefix.

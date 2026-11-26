@@ -10,7 +10,7 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
-from . import detector
+from . import detector, openvision
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. Treat object predictions as uncertain model output. Media results may be visible to the AI provider.')
 
@@ -148,6 +148,22 @@ def view_detections(path: str, time_s: float = 0, threshold: float = .5, limit: 
     """Return an annotated image of local model detections. The image is transmitted to the MCP host/model; no face identification or tracking."""
     report,rgb=detector.detect(resolve_media(path,allow_image=True),time_s,threshold,limit)
     return Image(data=detector.annotate(rgb,report['detections']),format='png')
+
+@mcp.tool()
+def open_vision_status() -> dict:
+    """Check local optional OWLv2 model files and dependencies without downloads."""
+    return openvision.status()
+
+@mcp.tool()
+def find_objects_by_text(path: str, queries: list[str], time_s: float = 0, threshold: float = .2, limit: int = 20) -> dict:
+    """Locate objects matching 1–8 short text descriptions using optional local OWLv2. Predictions are uncertain, not identities or exhaustive counts."""
+    return openvision.search(resolve_media(path,allow_image=True),queries,time_s,threshold,limit)[0]
+
+@mcp.tool()
+def view_text_matches(path: str, queries: list[str], time_s: float = 0, threshold: float = .2, limit: int = 20) -> Image:
+    """Return an annotated visual search image. This reruns local OWLv2 inference and sends the image to the MCP host."""
+    report,rgb=openvision.search(resolve_media(path,allow_image=True),queries,time_s,threshold,limit)
+    return Image(data=openvision.overlay(report,rgb),format='png')
 
 def main():
     mcp.run(transport='stdio')

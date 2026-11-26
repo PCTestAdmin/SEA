@@ -26,4 +26,4 @@ Only fixed COCO object classes are supported. A person class means a predicted p
 
 ## Verification
 
-Core tests cover normalization, limits, offline opt-in and image output. The separate Vision AI CI lane downloads official weights and a publicly accessible COCO validation image (000000039769.jpg, two cats) only for testing and checks for a cat prediction. This is a smoke test, not a quantitative benchmark. The fixture and weights are not redistributed in SEA. See [CI](https://github.com/PCTestAdmin/SEA/actions/workflows/vision.yml).
+Core tests cover normalization, limits, offline opt-in and image output. The separate Vision AI CI lane downloads official weights and a pinned Transformers test fixture of COCO image 000000039769 (two cats) only for testing and checks for a cat prediction. This is a smoke test, not a quantitative benchmark. The fixture and weights are not redistributed in SEA. See [CI](https://github.com/PCTestAdmin/SEA/actions/workflows/vision.yml).

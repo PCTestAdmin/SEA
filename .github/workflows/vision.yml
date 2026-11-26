@@ -16,9 +16,9 @@ jobs:
       - name: Fetch explicit public test inputs
         run: |
           curl --fail --location --retry 2 --max-time 90 https://download.pytorch.org/models/ssdlite320_mobilenet_v3_large_coco-a79551df.pth -o "$RUNNER_TEMP/sea-weights.pth"
-          curl --fail --location --retry 2 --max-time 60 https://images.cocodataset.org/val2017/000000039769.jpg -o "$RUNNER_TEMP/cats.jpg"
+          curl --fail --location --retry 2 --max-time 60 https://raw.githubusercontent.com/huggingface/transformers/v4.57.1/tests/fixtures/tests_samples/COCO/000000039769.png -o "$RUNNER_TEMP/cats.png"
           echo "SEA_VISION_WEIGHTS=$RUNNER_TEMP/sea-weights.pth" >> "$GITHUB_ENV"
-          echo "SEA_VISION_TEST_IMAGE=$RUNNER_TEMP/cats.jpg" >> "$GITHUB_ENV"
+          echo "SEA_VISION_TEST_IMAGE=$RUNNER_TEMP/cats.png" >> "$GITHUB_ENV"
       - run: python -m unittest discover -s tests -p test_detector.py -v
         env:
           OMP_NUM_THREADS: '2'

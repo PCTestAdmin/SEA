@@ -1,0 +1,27 @@
+name: Open Vision model test
+on: [workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  pretrained:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install ".[openvision]"
+      - name: Fetch explicit model and test fixture
+        run: |
+          python -c "from huggingface_hub import snapshot_download; import os; snapshot_download('google/owlv2-base-patch16-ensemble', revision='27d9485a27e88c5f0435d0ed8382dcb3b911ab46', local_dir=os.path.join(os.environ['RUNNER_TEMP'],'owlv2'), allow_patterns=['*.json','*.txt','model.safetensors'])"
+          curl --fail --location --retry 2 --max-time 60 https://raw.githubusercontent.com/huggingface/transformers/v4.57.1/tests/fixtures/tests_samples/COCO/000000039769.png -o "$RUNNER_TEMP/cats.png"
+          echo "SEA_OPEN_VISION_DIR=$RUNNER_TEMP/owlv2" >> "$GITHUB_ENV"
+          echo "SEA_OPEN_VISION_TEST_IMAGE=$RUNNER_TEMP/cats.png" >> "$GITHUB_ENV"
+      - run: python -m unittest discover -s tests -p test_openvision.py -v
+        env:
+          HF_HUB_OFFLINE: '1'
+          TRANSFORMERS_OFFLINE: '1'
+          OMP_NUM_THREADS: '2'
+          MKL_NUM_THREADS: '2'

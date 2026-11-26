@@ -71,7 +71,7 @@ In Claude Desktop, open the local MCP config (Settings > Developer > Edit Config
 }
 ```
 
-Restart the MCP client and verify that SEA exposes 26 tools, including optional Vision AI. See [model setup](vision-ai.md). Memory operations require optional setup described in [memory.md](memory.md). See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
+Restart the MCP client and verify that SEA exposes 29 tools, including optional Vision AI and [Open Vision](open-vision.md). See [model setup](vision-ai.md). Memory operations require optional setup described in [memory.md](memory.md). See the [tool catalog](../README.md#capabilities). Other clients with local stdio MCP support can use the same command, arguments and environment. Client-specific configuration differs.
 
 ## Command-line usage
 

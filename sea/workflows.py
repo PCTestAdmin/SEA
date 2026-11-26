@@ -1,5 +1,6 @@
 """Read-only workflow discovery, for clients without installed skills."""
 WORKFLOWS={
+    'find-objects-by-text': ['open_vision_status','find_objects_by_text','view_text_matches'],
     'detect-objects': ['vision_status','detect_objects','view_detections'],
     'read-screenshot': ['read_image_text', 'inspect_spatial', 'inspect_region'],
     'compare-screenshots': ['compare_images', 'view_image_difference', 'read_image_text'],
