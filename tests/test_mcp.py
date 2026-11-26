@@ -22,13 +22,15 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
             memory_dir.mkdir()
             evidence_dir=Path(tmp)/'evidence'
             evidence_dir.mkdir()
-            env=dict(os.environ,SEA_MEDIA_ROOTS=tmp,SEA_MEMORY_DIR=str(memory_dir),SEA_VISION_WEIGHTS='',SEA_OPEN_VISION_DIR='',SEA_EVIDENCE_DIR=str(evidence_dir))
+            index_dir=Path(tmp)/'index'
+            index_dir.mkdir()
+            env=dict(os.environ,SEA_MEDIA_ROOTS=tmp,SEA_MEMORY_DIR=str(memory_dir),SEA_VISION_WEIGHTS='',SEA_OPEN_VISION_DIR='',SEA_EVIDENCE_DIR=str(evidence_dir),SEA_INDEX_DIR=str(index_dir))
             params=StdioServerParameters(command=sys.executable,args=['-m','sea.server'],env=env)
             async with stdio_client(params) as (reader,writer):
                 async with ClientSession(reader,writer) as session:
                     await session.initialize()
                     tools=await session.list_tools()
-                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception','read_image_text','compare_images','view_image_difference','find_image_template','guided_workflows','vision_status','detect_objects','view_detections','open_vision_status','find_objects_by_text','view_text_matches','track_objects','view_object_tracks','capture_evidence','list_evidence','recall_evidence','verify_evidence','delete_evidence','measure_micro_motion','view_motion_waveform','autorift_status','measure_displacement','view_displacement_field','video_understanding_status','plan_video_analysis','analyze_video_page','view_video_segment','scan_video_timeline','read_video_frames','view_video_frame_region','compare_video_frames','listen_video_segment'})
+                    self.assertEqual({t.name for t in tools.tools},{'inspect_media','sense_media','view_frame','sense_audio','audio_spectrogram','compare_recordings','sense_video','investigate_media','inspect_spatial','inspect_region','sense_signals','investigate_recording','remember_audio','remember_signals','list_perception_memory','recall_perception','compare_perception','forget_perception','read_image_text','compare_images','view_image_difference','find_image_template','guided_workflows','vision_status','detect_objects','view_detections','open_vision_status','find_objects_by_text','view_text_matches','track_objects','view_object_tracks','capture_evidence','list_evidence','recall_evidence','verify_evidence','delete_evidence','measure_micro_motion','view_motion_waveform','autorift_status','measure_displacement','view_displacement_field','video_understanding_status','plan_video_analysis','analyze_video_page','view_video_segment','scan_video_timeline','read_video_frames','view_video_frame_region','compare_video_frames','listen_video_segment','build_video_index','read_video_index','locate_video_frame','remember_video_observation','search_video_observations','delete_video_index'})
                     result=await session.call_tool('sense_media',{'path':str(wav),'duration_s':1})
                     self.assertFalse(result.isError)
                     data=result.structuredContent or json.loads(result.content[0].text)
@@ -162,3 +164,21 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
                     result=await session.call_tool('listen_video_segment',{'path':str(audiovisual),'start_s':2,'duration_s':1})
                     self.assertFalse(result.isError)
                     self.assertTrue(any(c.type=='audio' and c.mimeType=='audio/wav' for c in result.content))
+
+                    result=await session.call_tool('build_video_index',{'path':str(audiovisual),'confirm':True})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    self.assertEqual(data['frame_count'],24)
+                    revision=data['source_revision']
+                    result=await session.call_tool('locate_video_frame',{'path':str(audiovisual),'relative_s':2})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    self.assertEqual(data['frame']['frame_index'],8)
+                    result=await session.call_tool('remember_video_observation',{'path':str(audiovisual),'first_frame':8,'last_frame':15,'note':'white frame','confirm':True})
+                    self.assertFalse(result.isError)
+                    result=await session.call_tool('search_video_observations',{'path':str(audiovisual),'query':'white'})
+                    self.assertFalse(result.isError)
+                    data=result.structuredContent or json.loads(result.content[0].text)
+                    self.assertEqual(len(data['notes']),1)
+                    result=await session.call_tool('delete_video_index',{'source_revision':revision,'confirm':True})
+                    self.assertFalse(result.isError)

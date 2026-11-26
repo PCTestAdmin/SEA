@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.17.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.18.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -231,7 +231,7 @@ Use the optional official autoRIFT 2.1.1 package to estimate local displacement 
 
 [Installation and limitations](docs/displacement.md) · [Upstream NASA JPL project](https://github.com/nasa-jpl/autoRIFT)
 
-### New in v0.17 — Universal Video Perception
+### Universal Video Perception
 
 **Your AI reasons. SEA provides the senses.** No extra AI model, API key or model weights are needed for the core video workflow. Navigate an entire MP4 in contiguous timed segments, inspect actual ordered frames, compare exact decoded frame ordinals, crop details, measure visual and audio changes, and return original audio excerpts as MCP WAV content.
 
@@ -243,6 +243,12 @@ what happened and how events relate, citing the times and evidence.
 ```
 
 [Universal Video Perception](docs/video-perception.md) · [Optional legacy model providers](docs/video-understanding.md)
+
+### New in v0.18 — Temporal Index
+
+With explicit permission, build a reusable local index of decoded frame ordinals, stream timestamps and keyframe flags. Locate frames by time without decoding the video again for metadata, and save searchable host-authored observations tied to frame ranges. No AI model, raw frame archive or embedding service required.
+
+[Temporal Index guide](docs/temporal-index.md)
 
 ## What could you use SEA for?
 
@@ -328,6 +334,12 @@ SEA uses FFmpeg to decode selected local media and NumPy to calculate signal fea
 | `view_video_frame_region` | Crop an exact decoded frame ordinal |
 | `compare_video_frames` | Compare exact frame ordinals and show changes |
 | `listen_video_segment` | Bounded WAV audio content for compatible hosts |
+| `build_video_index` | Explicitly create/reuse local frame timestamp index |
+| `read_video_index` | Paginated indexed frame metadata |
+| `locate_video_frame` | Look up nearest timestamp or exact indexed ordinal |
+| `remember_video_observation` | Save host-authored frame-range note with approval |
+| `search_video_observations` | Search saved notes by literal text |
+| `delete_video_index` | Delete index and notes with approval |
 
 <details>
 <summary><strong>Supported media and measurement limits</strong></summary>
@@ -430,6 +442,7 @@ The media engine needs no network connection. Installing dependencies may requir
 | Guide | Content |
 | :--- | :--- |
 | [Installation & troubleshooting](docs/installation.md) | Prerequisites, platform configuration, CLI |
+| [Temporal Index](docs/temporal-index.md) | Persistent frame timestamps and searchable observations |
 | [Universal Video Perception](docs/video-perception.md) | Model-free timeline, exact frame ordinals, audio and visual evidence |
 | [Optional model providers](docs/video-understanding.md) | Legacy opt-in descriptions and speech |
 | [Precision Displacement](docs/displacement.md) | Optional NASA JPL autoRIFT provider |

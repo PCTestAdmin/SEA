@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.18.0
+
+- Opt-in reusable SQLite temporal index of decoded frame ordinals, best-effort PTS ticks, relative timestamps and keyframe flags.
+- Indexed nearest-time and ordinal lookup, paginated metadata and searchable host-authored observation notes.
+- Explicit save/delete consent, source revision checks, bounded storage and no raw frames or model inference.
+- Four test cases and MCP round-trip coverage; prior autoRIFT native test remains unresolved.
+
 ## 0.17.0
 
 - Restore model-free perception as the primary video workflow; existing optional model adapters remain for compatibility.

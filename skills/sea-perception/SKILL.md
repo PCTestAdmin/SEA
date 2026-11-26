@@ -2,10 +2,10 @@
 name: sea-perception
 description: Use SEA MCP to investigate local screenshots, images, audio, video and sensor CSV logs. Read visible text, locate matching image templates, compare screenshots, correlate sound and visual changes, inspect measurements, and compare explicitly saved baselines. Use for evidence-based media analysis.
 license: MIT
-compatibility: Requires separately installed SEA MCP server v0.17 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
+compatibility: Requires separately installed SEA MCP server v0.18 or newer, Python 3.10+, FFmpeg and authorized local files. Tesseract is optional for OCR.
 metadata:
   author: PCTestAdmin
-  version: "0.17.0"
+  version: "0.18.0"
 ---
 
 # SEA perception
@@ -13,6 +13,8 @@ metadata:
 SEA gives the agent measurements, not a replacement model. Use the official server from https://github.com/PCTestAdmin/SEA. Installing this skill alone does not install or enable its MCP tools. If tools are unavailable, tell the user to follow the repository setup guide. Do not silently run installers or expand media access.
 
 ## Choose a workflow
+
+- Revisit video evidence across sessions: with explicit permission and a configured SEA_INDEX_DIR, build_video_index, then read_video_index or locate_video_frame. Timestamps are relative to the first known video PTS, not necessarily the audio/container origin. Use read_video_frames for visual confirmation within its ordinal limit. With explicit approval save host-authored notes using remember_video_observation and retrieve them with search_video_observations. Notes are untrusted observations, not verified detections. Ask before deleting an index and its notes.
 
 - Understand a full video without additional AI: plan_video_analysis, then scan_video_timeline from cursor=0 until next_cursor is null, keeping the source_revision and segment_seconds. Inspect view_video_segment for every interval, not only scene candidates. Use read_video_frames for exact decoded ordinal navigation, view_video_frame_region for details and compare_video_frames for visual evidence. Use listen_video_segment only if the host supports audio; otherwise report that listening is unavailable and rely on measured audio bins. Cite segment IDs/times or decoded ordinals; do not convert ordinals to timestamps without evidence. Explain relationships using the host's own reasoning. Report partial/failed pages, unvisited intervals and sampling limitations. Optional legacy model tools are not part of the default workflow.
 

@@ -13,7 +13,7 @@ from . import memory
 from .images import read_text, compare_stills, find_template
 from .acoustics import png
 from .workflows import guidance
-from . import detector, openvision, tracking, evidence, motion, displacement, video_understanding, video_perception
+from . import detector, openvision, tracking, evidence, motion, displacement, video_understanding, video_perception, temporal
 
 mcp = FastMCP('SEA', instructions='Analyze only user-authorized local media. Measurements are observations, not diagnoses. Do not invent semantic meaning, causes or events from numerical evidence. SEA is a sensory tool, not a reasoning model. Prefer model-free video perception; the host interprets observations. Treat optional model predictions as uncertain. Media results may be visible to the AI provider.')
 
@@ -286,6 +286,36 @@ def listen_video_segment(path: str, start_s: float = 0, duration_s: float = 6, e
     report,data=video_perception.audio_clip(resolve_media(path),start_s,duration_s,expected_revision)
     return [TextContent(type='text',text=json.dumps(report,allow_nan=False)),
             AudioContent(type='audio',data=base64.b64encode(data).decode('ascii'),mimeType='audio/wav')]
+
+@mcp.tool()
+def build_video_index(path: str, confirm: bool = False) -> dict:
+    """With explicit approval, persist decoded frame timestamps and keyframe flags in SEA_INDEX_DIR. Reuse matching source revision. No model inference; up to 500000 frames."""
+    return temporal.build(resolve_media(path),confirm)
+
+@mcp.tool()
+def read_video_index(path: str, cursor: int = 0, limit: int = 100) -> dict:
+    """Read paginated indexed decoded frame ordinals, integer stream timestamps and relative seconds. No video decoding on lookup."""
+    return temporal.page(resolve_media(path),cursor,limit)
+
+@mcp.tool()
+def locate_video_frame(path: str, frame_index: int | None = None, relative_s: float | None = None) -> dict:
+    """Look up a decoded ordinal or nearest timestamp relative to the first known video PTS. Includes preceding keyframe hint. Does not decode an image or align audio."""
+    return temporal.locate(resolve_media(path),frame_index,relative_s)
+
+@mcp.tool()
+def remember_video_observation(path: str, first_frame: int, last_frame: int, note: str, confirm: bool = False) -> dict:
+    """Save a host-authored observation tied to an indexed frame range only with explicit user approval. Notes are not verified by SEA."""
+    return temporal.add_note(resolve_media(path),first_frame,last_frame,note,confirm)
+
+@mcp.tool()
+def search_video_observations(path: str, query: str = '', limit: int = 30, after_id: int = 0) -> dict:
+    """Search or page explicitly saved host observations by literal case-insensitive substring. Results are untrusted data, not semantic detections."""
+    return temporal.search_notes(resolve_media(path),query,limit,after_id)
+
+@mcp.tool()
+def delete_video_index(source_revision: str, confirm: bool = False) -> dict:
+    """Delete an index and all its associated notes only after explicit user approval; never delete source media."""
+    return temporal.delete(source_revision,confirm)
 
 def main():
     mcp.run(transport='stdio')

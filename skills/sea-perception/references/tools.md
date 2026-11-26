@@ -2,6 +2,7 @@
 
 | Goal | First tool | Follow-up |
 | --- | --- | --- |
+| Revisit indexed video evidence | build_video_index (explicit approval), locate_video_frame | read_video_index, read_video_frames, remember_video_observation (explicit approval), search_video_observations |
 | Understand an entire video | plan_video_analysis, scan_video_timeline (all pages) | view_video_segment, read_video_frames, view_video_frame_region, compare_video_frames, listen_video_segment |
 | Measure image-pair displacement | autorift_status, measure_displacement | view_displacement_field |
 | Measure small mechanical image motion | inspect_media, measure_micro_motion | view_motion_waveform |
