@@ -3,6 +3,7 @@
 | Goal | First tool | Follow-up |
 | --- | --- | --- |
 | Start a model-free investigation | analyze_target | inspect_analysis_view, recommended follow-up tools |
+| Relate sampled video events | relate_video_events (1–16 v0.22 analyze_target pages) | audit_video_coverage, view_video_segment, read_video_frames |
 | Audit sampled video coverage | audit_video_coverage (1–16 complete analyze_target pages) | Fill missing_ranges, inspect incomplete_segments and actual frames |
 | Find repeated video appearances | build_video_index, build_visual_index (explicit approval) | search_visual_index, read_video_frames, search_video_template |
 | Revisit indexed video evidence | build_video_index (explicit approval), locate_video_frame | read_video_index, read_video_frames, remember_video_observation (explicit approval), search_video_observations |

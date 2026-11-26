@@ -62,5 +62,8 @@ class PerceptionTests(unittest.TestCase):
     def test_change_heuristic(self):
         a=np.zeros((2,8,8,3),dtype=np.uint8);a[1]=255
         self.assertTrue(visual_changes(a,0,4)[0]['scene_change_candidate'])
+        self.assertEqual(visual_changes(a,0,4)[0]['changed_tiles_4x4'],list(range(16)))
+        a[:]=0;a[1,:2,:2]=255
+        self.assertEqual(visual_changes(a,0,4)[0]['changed_tiles_4x4'],[0])
         with self.assertRaises(ValueError):native_page(self.p,100000,1)
         with self.assertRaises(ValueError):audio_clip(self.p,0,13)

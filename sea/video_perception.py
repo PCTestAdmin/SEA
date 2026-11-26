@@ -105,14 +105,19 @@ def visual_changes(frames,start,fps,previous=None):
         if prior is not None:
             delta=np.abs(frame.astype(np.int16)-prior.astype(np.int16))
             mad=float(delta.mean()/255)
-            changed=float((delta.max(axis=2)>=25).mean())
+            mask=delta.max(axis=2)>=25
+            changed=float(mask.mean())
+            # Grid cells use row-major indices in padded sample coordinates.
+            tiles=[4*y+x for y,band in enumerate(np.array_split(mask,4,axis=0))
+                   for x,cell in enumerate(np.array_split(band,4,axis=1))
+                   if cell.size and cell.mean()>=.10]
             # Luma histogram distance reduces sensitivity to small pixel translations.
             luma=lambda x:np.rint(x.astype(np.float32)@np.array([.2126,.7152,.0722])).astype(np.uint8)
             a=np.bincount((luma(prior)//16).ravel(),minlength=16)/prior.shape[0]/prior.shape[1]
             b=np.bincount((luma(frame)//16).ravel(),minlength=16)/frame.shape[0]/frame.shape[1]
             hist=float(np.abs(a-b).sum()/2)
             events.append({'time_s':round(start+i/fps,3),'mean_rgb_difference':round(mad,5),
-                           'changed_pixel_fraction':round(changed,5),'luma_histogram_distance':round(hist,5),
+                           'changed_pixel_fraction':round(changed,5),'changed_tiles_4x4':tiles,'luma_histogram_distance':round(hist,5),
                            'boundary_comparison':i==0,
                            'scene_change_candidate':mad>=.12 and hist>=.15})
         prior=frame

@@ -13,7 +13,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22b8cf?style=flat-square)](LICENSE)
 [![MCP](https://img.shields.io/badge/protocol-MCP-64748b?style=flat-square)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.21.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.22.0%20prototype-0891b2?style=flat-square)](pyproject.toml)
 
 [Quick start](#quick-start) · [Showcase](#showcase) · [How it works](#how-it-works) · [Capabilities](#capabilities) · [Roadmap](#roadmap) · [FAQ](#faq)
 
@@ -269,7 +269,7 @@ sea guided-workflows understand-full-video
 
 [Agent workflows, CLI and evidence contracts](docs/agent-workflows.md)
 
-### New in v0.21 — Video coverage audit
+### Video coverage audit
 
 Agents can now audit portable video analysis pages with `audit_video_coverage` (MCP) or `sea audit-video-coverage` (CLI). SEA checks the source revision and sampling settings, rejects overlapping segments, reports missing time ranges and separates submitted rows from incomplete visual/audio measurements or unavailable boundaries.
 
@@ -280,6 +280,18 @@ sea audit-video-coverage page0.json page1.json
 ```
 
 [Coverage audit guide](docs/video-coverage.md). A complete audit of sampled measurements does not prove that every native frame was inspected or that the host understood every event. No new model or dependency required.
+
+### New in v0.22 — Spatiotemporal event relations
+
+SEA measures changed 4 × 4 image tiles and connects consecutive visual changes within two seconds, reporting overlap of their tile sets. It also links nearby audio low-level transitions within half a second. Each event references the source evidence envelope and segment. Gaps and incomplete segments interrupt the chain; scene candidates are not treated as object tracking.
+
+```bash
+sea relate-video-events page0.json page1.json --limit 50
+```
+
+Or call MCP `relate_video_events` with 1–16 v0.22 analysis envelopes; follow `next_offset`. No new model or dependencies. The host must inspect the actual media and reason about meaning.
+
+[Event relations guide](docs/event-relations.md)
 
 ## What could you use SEA for?
 

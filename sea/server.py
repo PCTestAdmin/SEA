@@ -353,6 +353,12 @@ def audit_video_coverage(evidence_pages: list[dict]) -> dict:
     """Audit 1–16 portable video evidence pages for missing, duplicate and incomplete segments. No decoding, storage or semantic inference."""
     return analysis.audit_video_coverage(evidence_pages)
 
+@mcp.tool()
+def relate_video_events(evidence_pages: list[dict], offset: int = 0, limit: int = 50) -> dict:
+    """Relate sampled visual changes and audio level transitions from 1–16 complete v0.22 video evidence pages. Links are measurements, not semantic or causal claims."""
+    from .event_relations import relate
+    return relate(evidence_pages,offset,limit)
+
 @mcp.prompt()
 def investigate_media_evidence() -> str:
     """Start a model-free investigation with portable evidence."""

@@ -46,7 +46,7 @@ def analyze_target(path, cursor=0, segment_seconds=8, page_size=2, sample_fps=4,
         params={'cursor':cursor,'segment_seconds':segment_seconds,'page_size':page_size,'sample_fps':sample_fps}
         collection='results'
         next_cursor=result['next_cursor']
-        follow=['analyze_target','audit_video_coverage','view_video_segment','read_video_frames','listen_video_segment']
+        follow=['analyze_target','audit_video_coverage','relate_video_events','view_video_segment','read_video_frames','listen_video_segment']
         coverage='One sampled timeline page; follow next_cursor and inspect actual visual evidence.'
     elif kind=='audio':
         result=analyze(p,start_s,duration_s)

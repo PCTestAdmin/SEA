@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.22.0
+
+- Add 4 × 4 changed-tile measurements to sampled visual comparisons and model-free event relations across contiguous complete evidence pages.
+- New MCP relate_video_events and CLI relate-video-events with paginated events, evidence references, visual sequence, tile overlap and nearby audio-level transitions.
+- Missing or incomplete segments break continuity. No identity, semantic or causal claims. No new dependencies.
+- Fix stale hardcoded doctor version assertion: use the package version. The v0.21 main CI passed its evidence parity and coverage tests but failed the old version assertion; all three optional smoke workflows passed.
+- Add synthetic and real fixture regression tests, MCP integration, README and skill updates. v0.22 CI not yet verified.
+
 ## 0.21.0
 
 - Normalize time arguments before shared analysis and hashing to fix CLI/Python/MCP evidence parity (integer versus floating-point representations).

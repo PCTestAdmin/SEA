@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from sea import __version__
 from sea.setup import entry, media_root, register, doctor
 
 
@@ -62,5 +63,5 @@ class SetupTests(unittest.TestCase):
             media_root(str(self.root / 'absent'))
 
     def test_doctor(self):
-        self.assertEqual(doctor(self.media)['version'], '0.20.0')
+        self.assertEqual(doctor(self.media)['version'], __version__)
         self.assertTrue(doctor(self.media)['checks']['media_root'])
